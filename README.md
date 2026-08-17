@@ -1,6 +1,4 @@
-# LAB-Comunicaciones-2
-
-Equipo A1E
+# CommunicationsII_2026_2_A1E
 
 Integrantes:
  * Jarol Nicolas Molano Lopez 
