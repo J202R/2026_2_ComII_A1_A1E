@@ -1,4 +1,4 @@
-# CommunicationsII_2026_2_A1E
+# CommII_A1_A1E
 
 Integrantes:
  * Jarol Nicolas Molano Lopez 
