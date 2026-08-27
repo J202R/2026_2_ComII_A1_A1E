@@ -1,0 +1,152 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: untitled
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '32000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 12]
+    rotation: 0
+    state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='e_Diff',       # Comillas est\xE1ndar de Python\n       \
+      \     in_sig=[np.float32],\n            out_sig=[np.float32]\n        )\n  \
+      \      # La inicializaci\xF3n de tus variables de estado va FUERA del bloque\
+      \ anterior\n        self.acum_anterior = 0.0\n\n    def work(self, input_items,\
+      \ output_items):\n        x = input_items[0]       # Se\xF1al de entrada\n \
+      \       y0 = output_items[0]     # Se\xF1al acumulada diferencial\n        N\
+      \ = len(x)\n        \n        # L\xF3gica de acumulaci\xF3n considerando el\
+      \ estado del bloque anterior\n        diff = np.cumsum(x) + self.acum_anterior\n\
+      \        self.acum_anterior = diff[N - 1]\n        \n        y0[:] = diff\n\
+      \        return len(y0)           # Retorna la longitud del vector correcto\
+      \ (y0)\n\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('e_Diff', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1)], '',
+      [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [872, 384.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_1
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='e_Acum',       # Comillas simples est\xE1ndar de Python\n\
+      \            in_sig=[np.float32],\n            out_sig=[np.float32]\n      \
+      \  )\n\n    def work(self, input_items, output_items):\n        x = input_items[0]\
+      \       # Se\xF1al de entrada\n        y0 = output_items[0]     # Se\xF1al de\
+      \ salida asignada\n        \n        # L\xF3gica del acumulador utilizando la\
+      \ funci\xF3n de NumPy\n        y0[:] = np.cumsum(x)\n        \n        return\
+      \ len(y0)           # Retorna la longitud del vector de salida corregido\n\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('e_Acum', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1)], '',
+      [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [864, 312.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_2
+  id: epy_block
+  parameters:
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
+      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='Promedios_de_tiempos',\n            in_sig=[np.float32],\n\
+      \            out_sig=[np.float32, np.float32, np.float32, np.float32, np.float32]\n\
+      \        )\n        # Variables de estado persistentes\n        self.acum_x\
+      \ = 0.0\n        self.acum_x2 = 0.0\n        self.Ntotales = 0\n\n    def work(self,\
+      \ input_items, output_items):\n        x = input_items[0]       # Se\xF1al de\
+      \ entrada\n        y0 = output_items[0]     # Promedio acumulado (Media)\n \
+      \       y1 = output_items[1]     # Media cuadr\xE1tica (MS)\n        y2 = output_items[2]\
+      \     # RMS\n        y3 = output_items[3]     # Potencia promedio\n        y4\
+      \ = output_items[4]     # Desviaci\xF3n est\xE1ndar (Std)\n        \n      \
+      \  N = len(x)\n        if N == 0:\n            return 0\n            \n    \
+      \    # 1. Actualizar el contador global de muestras\n        self.Ntotales +=\
+      \ N\n        \n        # 2. Acumulaci\xF3n hist\xF3rica lineal y cuadr\xE1tica\n\
+      \        self.acum_x += np.sum(x)\n        self.acum_x2 += np.sum(x**2)\n  \
+      \      \n        # 3. C\xE1lculo de estimadores temporales globales\n      \
+      \  media_global = self.acum_x / self.Ntotales\n        ms_global = self.acum_x2\
+      \ / self.Ntotales      # Media de los cuadrados\n        rms_global = np.sqrt(ms_global)\n\
+      \        \n        # 4. Varianza = E[X^2] - (E[X])^2\n        varianza = ms_global\
+      \ - (media_global**2)\n        if varianza < 0: \n            varianza = 0 \
+      \ # Evita errores num\xE9ricos de precisi\xF3n por flotantes\n        std_global\
+      \ = np.sqrt(varianza)\n        \n        # 5. Asignar los valores calculados\
+      \ a los vectores de salida de GRC\n        y0[:] = media_global\n        y1[:]\
+      \ = ms_global\n        y2[:] = rms_global\n        y3[:] = ms_global  # En ingenier\xED\
+      a, la potencia promedio de una se\xF1al es su MS\n        y4[:] = std_global\n\
+      \        \n        return len(x)\n\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Promedios_de_tiempos', 'blk', [], [('0', 'float', 1)], [('0', 'float',
+      1), ('1', 'float', 1), ('2', 'float', 1), ('3', 'float', 1), ('4', 'float',
+      1)], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [608, 296.0]
+    rotation: 0
+    state: enabled
+connections: []
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.9.2
