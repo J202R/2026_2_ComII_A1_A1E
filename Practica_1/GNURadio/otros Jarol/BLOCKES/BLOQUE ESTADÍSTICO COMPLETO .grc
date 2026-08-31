@@ -28,7 +28,7 @@ options:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1304, 432.0]
+    coordinate: [1008, 608.0]
     rotation: 0
     state: enabled
 
@@ -42,7 +42,44 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1544, 452.0]
+    coordinate: [1240, 604.0]
+    rotation: 0
+    state: enabled
+- name: analog_noise_source_x_0
+  id: analog_noise_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    amp: '0.1'
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    noise_type: analog.GR_GAUSSIAN
+    seed: '0'
+    type: float
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [152, 880.0]
+    rotation: 0
+    state: enabled
+- name: blocks_add_xx_0
+  id: blocks_add_xx
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    num_inputs: '2'
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [528, 836.0]
     rotation: 0
     state: enabled
 - name: blocks_file_source_0
@@ -52,7 +89,7 @@ blocks:
     alias: ''
     begin_tag: pmt.PMT_NIL
     comment: ''
-    file: C:\Users\molan\Downloads\BASURAA\ecg_100.bin
+    file: C:\Users\molan\Downloads\BASURAA\ecg_118.bin
     length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -64,7 +101,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [416, 548.0]
+    coordinate: [152, 724.0]
     rotation: 0
     state: enabled
 - name: blocks_moving_average_xx_0
@@ -84,7 +121,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1120, 732.0]
+    coordinate: [1040, 732.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle2_0
@@ -105,7 +142,28 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [808, 756.0]
+    coordinate: [720, 780.0]
+    rotation: 0
+    state: enabled
+- name: blocks_throttle2_0_0
+  id: blocks_throttle2
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: float
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [480, 532.0]
     rotation: 0
     state: enabled
 - name: epy_block_2
@@ -149,7 +207,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1528, 700.0]
+    coordinate: [1304, 716.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_0
@@ -212,7 +270,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1928, 364.0]
+    coordinate: [1608, 508.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_1
@@ -275,7 +333,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2112, 540.0]
+    coordinate: [1656, 644.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_2
@@ -338,7 +396,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2184, 716.0]
+    coordinate: [1720, 780.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_3
@@ -401,7 +459,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [2096, 892.0]
+    coordinate: [1664, 916.0]
     rotation: 0
     state: enabled
 - name: qtgui_number_sink_4
@@ -464,7 +522,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1968, 1060.0]
+    coordinate: [1616, 1076.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -482,7 +540,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'False'
+    autoscale: 'True'
     axislabels: 'True'
     color1: blue
     color10: dark blue
@@ -520,7 +578,7 @@ blocks:
     marker7: '-1'
     marker8: '-1'
     marker9: '-1'
-    name: '"RR"'
+    name: '"ORIGINAL"'
     nconnections: '1'
     size: '1024'
     srate: samp_rate
@@ -561,7 +619,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [784, 396.0]
+    coordinate: [728, 516.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0
@@ -617,7 +675,7 @@ blocks:
     marker7: '-1'
     marker8: '-1'
     marker9: '-1'
-    name: '""'
+    name: '"SIN RUIDO"'
     nconnections: '1'
     size: '1024'
     srate: samp_rate
@@ -658,16 +716,117 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1456, 992.0]
+    coordinate: [1304, 872.0]
+    rotation: 0
+    state: enabled
+- name: qtgui_time_sink_x_0_1
+  id: qtgui_time_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
+    comment: ''
+    ctrlpanel: 'False'
+    entags: 'True'
+    grid: 'False'
+    gui_hint: ''
+    label1: Signal 1
+    label10: Signal 10
+    label2: Signal 2
+    label3: Signal 3
+    label4: Signal 4
+    label5: Signal 5
+    label6: Signal 6
+    label7: Signal 7
+    label8: Signal 8
+    label9: Signal 9
+    legend: 'True'
+    marker1: '-1'
+    marker10: '-1'
+    marker2: '-1'
+    marker3: '-1'
+    marker4: '-1'
+    marker5: '-1'
+    marker6: '-1'
+    marker7: '-1'
+    marker8: '-1'
+    marker9: '-1'
+    name: '"RUIDO"'
+    nconnections: '1'
+    size: '1024'
+    srate: samp_rate
+    stemplot: 'False'
+    style1: '1'
+    style10: '1'
+    style2: '1'
+    style3: '1'
+    style4: '1'
+    style5: '1'
+    style6: '1'
+    style7: '1'
+    style8: '1'
+    style9: '1'
+    tr_chan: '0'
+    tr_delay: '0'
+    tr_level: '0.0'
+    tr_mode: qtgui.TRIG_MODE_FREE
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: '""'
+    type: float
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    ylabel: Amplitude
+    ymax: '1'
+    ymin: '-1'
+    yunit: '""'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 916.0]
     rotation: 0
     state: enabled
 
 connections:
-- [blocks_file_source_0, '0', blocks_throttle2_0, '0']
-- [blocks_file_source_0, '0', qtgui_time_sink_x_0, '0']
+- [analog_noise_source_x_0, '0', blocks_add_xx_0, '1']
+- [blocks_add_xx_0, '0', blocks_throttle2_0, '0']
+- [blocks_file_source_0, '0', blocks_add_xx_0, '0']
+- [blocks_file_source_0, '0', blocks_throttle2_0_0, '0']
 - [blocks_moving_average_xx_0, '0', epy_block_2, '0']
 - [blocks_moving_average_xx_0, '0', qtgui_time_sink_x_0_0, '0']
 - [blocks_throttle2_0, '0', blocks_moving_average_xx_0, '0']
+- [blocks_throttle2_0, '0', qtgui_time_sink_x_0_1, '0']
+- [blocks_throttle2_0_0, '0', qtgui_time_sink_x_0, '0']
 - [epy_block_2, '0', qtgui_number_sink_0, '0']
 - [epy_block_2, '1', qtgui_number_sink_1, '0']
 - [epy_block_2, '2', qtgui_number_sink_2, '0']

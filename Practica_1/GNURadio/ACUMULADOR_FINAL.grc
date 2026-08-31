@@ -63,7 +63,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [536, 356.0]
+    coordinate: [512, 308.0]
     rotation: 0
     state: enabled
 - name: blocks_vector_source_x_0
@@ -112,7 +112,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1128, 376.0]
+    coordinate: [752, 328.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -209,7 +209,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [928, 160.0]
+    coordinate: [504, 192.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0
@@ -306,7 +306,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1440, 320.0]
+    coordinate: [936, 284.0]
     rotation: 0
     state: enabled
 
