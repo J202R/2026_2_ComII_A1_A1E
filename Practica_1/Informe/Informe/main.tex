@@ -158,7 +158,7 @@ Esta práctica de laboratorio se enfoca en el diseño, implementación y evaluac
 
 \section{Metodología}
 
-Se implementaron y modificaron los bloques personalizados en Python (\textit{Embedded Python Block} \cite{wikipediaPythonBlocks}) propuestos por el libro guia\cite{ortega2019comunicaciones} 
+Se implementaron y modificaron los bloques personalizados en Python (\textit{Embedded Python Block} \cite{wikipediaPythonBlocks}) propuestos por el libro guía\cite{ortega2019comunicaciones} 
 en GNU Radio Companion, correspondientes a un acumulador y un diferenciador, 
 operaciones inversas entre sí que sirven de base para el análisis estadístico 
 posterior.
@@ -312,12 +312,12 @@ class blk(gr.sync_block):
 
 \subsection{Aplicación: análisis estadístico de una señal ECG}
 
-Como aplicación de los bloques implementados se utilizó una señal real de ECG 
+Como aplicación de los bloques implementados, se utilizó una señal real de ECG 
 limpia, correspondiente al registro 118 de la base de datos MIT-BIH Arrhythmia 
 Database \cite{moody2005mitdb}. A esta señal se le añadió ruido gaussiano 
 artificial mediante un bloque \textit{Noise Source} y un bloque \textit{Add}, el 
 cual fue posteriormente atenuado con un bloque \textit{Moving Average} como se explicó en \cite{tijaro2025timeaverages}, las configuraciones de este bloque correspondieron a una de longitud 
-4 muestras y una escala de $1/M$ para realizar correctamente los promedios temporales y cumplir con la frecuencia máxima $f_{max}=40Hz$.
+4 muestras y una escala de $1/M$ para realizar correctamente los promedios temporales y cumplir con la frecuencia máxima $f_{max}=40$ Hz.
 
 
 \begin{equation}
@@ -364,7 +364,7 @@ algoritmo implementado.
 Como se observa en la figura \ref{fig:acum_test}, al ingresar una señal constante 
 de valor $1\text{m}$ al bloque \textit{e\_Acum}, la señal de salida crece de forma 
 lineal en el tiempo, generando una rampa cuya pendiente corresponde al valor de la 
-señal de entrada, tal como lo predice la teoría. Se observa 
+señal de entrada, tal como lo predice la teoría. Se observa, 
 además que dicho crecimiento se mantiene continuo a lo largo de todo el registro, 
 sin saltos ni reinicios entre los distintos bloques de procesamiento, lo cual 
 confirma que el estado interno del bloque (\texttt{valor\_anterior}) conserva 
@@ -489,8 +489,8 @@ figura \ref{fig:acum_test}, donde una entrada constante de 1m genera una rampa
 lineal y continua en la salida, sin saltos entre llamados a \texttt{work}, 
 validando el correcto funcionamiento del bloque \textit{e\_Acum} como operación 
 inversa del diferenciador.
-Como se observa en la figura \ref{fig:diff_test} el 
-diferenciador respondió correctamente ante la señal de entrada constante en la cual se observó el comportamiento adecuado, dando como resultado una salida con valor cero, de igual manera para la rampa se presento la salida correcta. De igual forma, en la figura 
+Como se observa en la figura \ref{fig:diff_test}, el 
+diferenciador respondió correctamente ante la señal de entrada constante en la cual se observó el comportamiento adecuado, dando como resultado una salida con valor cero, de igual manera, para la rampa se presentó la salida correcta. De igual forma, en la figura 
 \ref{fig:estadisticas_test} los estimadores estadísticos calculados convergieron 
 a los valores teóricos esperados para una señal cosenoidal.
 
