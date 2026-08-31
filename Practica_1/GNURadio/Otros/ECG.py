@@ -6,12 +6,13 @@
 #
 # GNU Radio Python Flow Graph
 # Title: Not titled yet
+# Author: juan
 # GNU Radio version: 3.10.9.2
 
 from PyQt5 import Qt
 from gnuradio import qtgui
-from gnuradio import analog
 from gnuradio import blocks
+import pmt
 from gnuradio import gr
 from gnuradio.filter import firdes
 from gnuradio.fft import window
@@ -21,14 +22,12 @@ from PyQt5 import Qt
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+import ECG_epy_block_0 as epy_block_0  # embedded python block
 import sip
-import untitled_epy_block_0 as epy_block_0  # embedded python block
-import untitled_epy_block_1 as epy_block_1  # embedded python block
-import untitled_epy_block_1_0 as epy_block_1_0  # embedded python block
 
 
 
-class untitled(gr.top_block, Qt.QWidget):
+class ECG(gr.top_block, Qt.QWidget):
 
     def __init__(self):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
@@ -51,7 +50,7 @@ class untitled(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "untitled")
+        self.settings = Qt.QSettings("GNU Radio", "ECG")
 
         try:
             geometry = self.settings.value("geometry")
@@ -63,31 +62,33 @@ class untitled(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 32000
+        self.samp_rate_1 = samp_rate_1 = 360
+        self.samp_rate = samp_rate = 360
+        self.M = M = 3
 
         ##################################################
         # Blocks
         ##################################################
 
-        self.qtgui_time_sink_x_1 = qtgui.time_sink_f(
+        self.qtgui_time_sink_x_0_0 = qtgui.time_sink_f(
             1024, #size
             samp_rate, #samp_rate
             "", #name
-            2, #number of inputs
+            1, #number of inputs
             None # parent
         )
-        self.qtgui_time_sink_x_1.set_update_time(0.10)
-        self.qtgui_time_sink_x_1.set_y_axis(-1, 1)
+        self.qtgui_time_sink_x_0_0.set_update_time(0.10)
+        self.qtgui_time_sink_x_0_0.set_y_axis(-1, 1)
 
-        self.qtgui_time_sink_x_1.set_y_label('Amplitude', "")
+        self.qtgui_time_sink_x_0_0.set_y_label('Amplitude', "")
 
-        self.qtgui_time_sink_x_1.enable_tags(True)
-        self.qtgui_time_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_1.enable_autoscale(True)
-        self.qtgui_time_sink_x_1.enable_grid(False)
-        self.qtgui_time_sink_x_1.enable_axis_labels(True)
-        self.qtgui_time_sink_x_1.enable_control_panel(False)
-        self.qtgui_time_sink_x_1.enable_stem_plot(False)
+        self.qtgui_time_sink_x_0_0.enable_tags(True)
+        self.qtgui_time_sink_x_0_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_0_0.enable_autoscale(True)
+        self.qtgui_time_sink_x_0_0.enable_grid(True)
+        self.qtgui_time_sink_x_0_0.enable_axis_labels(True)
+        self.qtgui_time_sink_x_0_0.enable_control_panel(False)
+        self.qtgui_time_sink_x_0_0.enable_stem_plot(False)
 
 
         labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
@@ -104,22 +105,22 @@ class untitled(gr.top_block, Qt.QWidget):
             -1, -1, -1, -1, -1]
 
 
-        for i in range(2):
+        for i in range(1):
             if len(labels[i]) == 0:
-                self.qtgui_time_sink_x_1.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_time_sink_x_0_0.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_time_sink_x_1.set_line_label(i, labels[i])
-            self.qtgui_time_sink_x_1.set_line_width(i, widths[i])
-            self.qtgui_time_sink_x_1.set_line_color(i, colors[i])
-            self.qtgui_time_sink_x_1.set_line_style(i, styles[i])
-            self.qtgui_time_sink_x_1.set_line_marker(i, markers[i])
-            self.qtgui_time_sink_x_1.set_line_alpha(i, alphas[i])
+                self.qtgui_time_sink_x_0_0.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_0_0.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_0_0.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_0_0.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_0_0.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_0_0.set_line_alpha(i, alphas[i])
 
-        self._qtgui_time_sink_x_1_win = sip.wrapinstance(self.qtgui_time_sink_x_1.qwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_1_win)
+        self._qtgui_time_sink_x_0_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0_0.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_0_0_win)
         self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
-            1024, #size
-            samp_rate, #samp_rate
+            342, #size
+            samp_rate/M, #samp_rate
             "", #name
             1, #number of inputs
             None # parent
@@ -131,8 +132,8 @@ class untitled(gr.top_block, Qt.QWidget):
 
         self.qtgui_time_sink_x_0.enable_tags(True)
         self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0.enable_grid(False)
+        self.qtgui_time_sink_x_0.enable_autoscale(True)
+        self.qtgui_time_sink_x_0.enable_grid(True)
         self.qtgui_time_sink_x_0.enable_axis_labels(True)
         self.qtgui_time_sink_x_0.enable_control_panel(False)
         self.qtgui_time_sink_x_0.enable_stem_plot(False)
@@ -165,56 +166,56 @@ class untitled(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.qwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.epy_block_1_0 = epy_block_1_0.blk()
-        self.epy_block_1 = epy_block_1.blk()
-        self.epy_block_0 = epy_block_0.blk()
-        self.blocks_vector_source_x_0 = blocks.vector_source_f([1], True, 1, )
-        self.blocks_throttle2_1 = blocks.throttle( gr.sizeof_float*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
-        self.blocks_throttle2_0_0 = blocks.throttle( gr.sizeof_float*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
-        self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_float*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
-        self.analog_sig_source_x_1 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 1000, 1, 0, 0)
-        self.analog_sig_source_x_0 = analog.sig_source_f(samp_rate, analog.GR_COS_WAVE, 1000, 1, 0, 0)
+        self.epy_block_0 = epy_block_0.blk(M=M)
+        self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_float*1, samp_rate_1, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate_1) if "auto" == "time" else int(0.1), 1) )
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_float*1, '/home/juan/Descargas/ecg_100.bin', True, 0, 0)
+        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_sig_source_x_0, 0), (self.epy_block_1, 0))
-        self.connect((self.analog_sig_source_x_1, 0), (self.epy_block_0, 0))
-        self.connect((self.blocks_throttle2_0, 0), (self.qtgui_time_sink_x_1, 0))
-        self.connect((self.blocks_throttle2_0_0, 0), (self.qtgui_time_sink_x_1, 1))
-        self.connect((self.blocks_throttle2_1, 0), (self.qtgui_time_sink_x_0, 0))
-        self.connect((self.blocks_vector_source_x_0, 0), (self.epy_block_1_0, 0))
-        self.connect((self.epy_block_0, 0), (self.blocks_throttle2_1, 0))
-        self.connect((self.epy_block_1, 0), (self.blocks_throttle2_0, 0))
-        self.connect((self.epy_block_1_0, 0), (self.blocks_throttle2_0_0, 0))
+        self.connect((self.blocks_file_source_0, 0), (self.blocks_throttle2_0, 0))
+        self.connect((self.blocks_throttle2_0, 0), (self.epy_block_0, 0))
+        self.connect((self.blocks_throttle2_0, 0), (self.qtgui_time_sink_x_0_0, 0))
+        self.connect((self.epy_block_0, 0), (self.qtgui_time_sink_x_0, 0))
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "untitled")
+        self.settings = Qt.QSettings("GNU Radio", "ECG")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
 
         event.accept()
 
+    def get_samp_rate_1(self):
+        return self.samp_rate_1
+
+    def set_samp_rate_1(self, samp_rate_1):
+        self.samp_rate_1 = samp_rate_1
+        self.blocks_throttle2_0.set_sample_rate(self.samp_rate_1)
+
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate)
-        self.analog_sig_source_x_1.set_sampling_freq(self.samp_rate)
-        self.blocks_throttle2_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle2_0_0.set_sample_rate(self.samp_rate)
-        self.blocks_throttle2_1.set_sample_rate(self.samp_rate)
-        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
-        self.qtgui_time_sink_x_1.set_samp_rate(self.samp_rate)
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.M)
+        self.qtgui_time_sink_x_0_0.set_samp_rate(self.samp_rate)
+
+    def get_M(self):
+        return self.M
+
+    def set_M(self, M):
+        self.M = M
+        self.epy_block_0.M = self.M
+        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate/self.M)
 
 
 
 
-def main(top_block_cls=untitled, options=None):
+def main(top_block_cls=ECG, options=None):
 
     qapp = Qt.QApplication(sys.argv)
 

@@ -1,6 +1,6 @@
 options:
   parameters:
-    author: ''
+    author: juan
     catch_exceptions: 'True'
     category: '[GRC Hier Blocks]'
     cmake_opt: ''
@@ -11,7 +11,7 @@ options:
     gen_linking: dynamic
     generate_options: qt_gui
     hier_block_src_path: '.:'
-    id: untitled
+    id: ECG
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -33,11 +33,23 @@ options:
     state: enabled
 
 blocks:
+- name: M
+  id: variable
+  parameters:
+    comment: ''
+    value: '3'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [312, 16.0]
+    rotation: 0
+    state: enabled
 - name: samp_rate
   id: variable
   parameters:
     comment: ''
-    value: '32000'
+    value: '360'
   states:
     bus_sink: false
     bus_source: false
@@ -45,50 +57,38 @@ blocks:
     coordinate: [184, 12]
     rotation: 0
     state: enabled
-- name: analog_sig_source_x_0
-  id: analog_sig_source_x
+- name: samp_rate_1
+  id: variable
   parameters:
-    affinity: ''
-    alias: ''
-    amp: '1'
     comment: ''
-    freq: '1000'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    offset: '0'
-    phase: '0'
-    samp_rate: samp_rate
-    showports: 'False'
-    type: float
-    waveform: analog.GR_COS_WAVE
+    value: '360'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 152.0]
+    coordinate: [424, 32.0]
     rotation: 0
     state: enabled
-- name: analog_sig_source_x_1
-  id: analog_sig_source_x
+- name: blocks_file_source_0
+  id: blocks_file_source
   parameters:
     affinity: ''
     alias: ''
-    amp: '1'
+    begin_tag: pmt.PMT_NIL
     comment: ''
-    freq: '1000'
+    file: /home/juan/Descargas/ecg_100.bin
+    length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'
     offset: '0'
-    phase: '0'
-    samp_rate: samp_rate
-    showports: 'False'
+    repeat: 'True'
     type: float
-    waveform: analog.GR_COS_WAVE
+    vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [368, 328.0]
+    coordinate: [136, 352.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle2_0
@@ -102,91 +102,43 @@ blocks:
     maximum: '0.1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samples_per_second: samp_rate
+    samples_per_second: samp_rate_1
     type: float
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [816, 184.0]
-    rotation: 0
-    state: enabled
-- name: blocks_throttle2_1
-  id: blocks_throttle2
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    ignoretag: 'True'
-    limit: auto
-    maximum: '0.1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samples_per_second: samp_rate
-    type: float
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [824, 360.0]
+    coordinate: [384, 376.0]
     rotation: 0
     state: enabled
 - name: epy_block_0
   id: epy_block
   parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
-      \            name='e_Diff',       # Comillas est\xE1ndar de Python\n       \
-      \     in_sig=[np.float32],\n            out_sig=[np.float32]\n        )\n  \
-      \      # La inicializaci\xF3n de tus variables de estado va FUERA del bloque\
-      \ anterior\n        self.acum_anterior = 0.0\n\n    def work(self, input_items,\
-      \ output_items):\n        x = input_items[0]       # Se\xF1al de entrada\n \
-      \       y0 = output_items[0]     # Se\xF1al acumulada diferencial\n        N\
-      \ = len(x)\n        \n        # L\xF3gica de acumulaci\xF3n considerando el\
-      \ estado del bloque anterior\n        diff = np.cumsum(x) + self.acum_anterior\n\
-      \        self.acum_anterior = diff[N - 1]\n        \n        y0[:] = diff\n\
-      \        return len(y0)           # Retorna la longitud del vector correcto\
-      \ (y0)\n\n"
+    M: M
+    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.decim_block):\
+      \   # <-- CORRECCI\xD3N: era gr.sync_decimator\n    def __init__(self, M=64):\n\
+      \        gr.decim_block.__init__(   # <-- tambi\xE9n aqu\xED\n            self,\n\
+      \            name='Promedios_de_tiempos',\n            in_sig=[np.float32],\n\
+      \            out_sig=[np.float32],\n            decim=M\n        )\n       \
+      \ self.M = M\n\n    def work(self, input_items, output_items):\n        x =\
+      \ input_items[0]\n        y0 = output_items[0]\n        n_out = len(y0)\n\n\
+      \        for i in range(n_out):\n            acum_x = 0.0\n            Ntotales\
+      \ = 0\n\n            ventana = x[i*self.M : (i+1)*self.M]\n\n            Ntotales\
+      \ += len(ventana)\n            acum_x += np.sum(ventana)\n\n            media\
+      \ = acum_x / Ntotales\n            y0[i] = media\n\n        return n_out\n"
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
   states:
-    _io_cache: ('e_Diff', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1)], '',
-      [])
+    _io_cache: ('Promedios_de_tiempos', 'blk', [('M', '64')], [('0', 'float', 1)],
+      [('0', 'float', 1)], '', ['M'])
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [632, 376.0]
-    rotation: 0
-    state: enabled
-- name: epy_block_1
-  id: epy_block
-  parameters:
-    _source_code: "import numpy as np\nfrom gnuradio import gr\n\nclass blk(gr.sync_block):\n\
-      \    def __init__(self):\n        gr.sync_block.__init__(\n            self,\n\
-      \            name='e_Acum',       # Comillas simples est\xE1ndar de Python\n\
-      \            in_sig=[np.float32],\n            out_sig=[np.float32]\n      \
-      \  )\n\n    def work(self, input_items, output_items):\n        x = input_items[0]\
-      \       # Se\xF1al de entrada\n        y0 = output_items[0]     # Se\xF1al de\
-      \ salida asignada\n        \n        # L\xF3gica del acumulador utilizando la\
-      \ funci\xF3n de NumPy\n        y0[:] = np.cumsum(x)\n        \n        return\
-      \ len(y0)           # Retorna la longitud del vector de salida corregido\n\n"
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-  states:
-    _io_cache: ('e_Acum', 'blk', [], [('0', 'float', 1)], [('0', 'float', 1)], '',
-      [])
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [640, 200.0]
+    coordinate: [616, 384.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0
@@ -204,7 +156,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'False'
+    autoscale: 'True'
     axislabels: 'True'
     color1: blue
     color10: dark blue
@@ -219,7 +171,7 @@ blocks:
     comment: ''
     ctrlpanel: 'False'
     entags: 'True'
-    grid: 'False'
+    grid: 'True'
     gui_hint: ''
     label1: Signal 1
     label10: Signal 10
@@ -244,8 +196,8 @@ blocks:
     marker9: '-1'
     name: '""'
     nconnections: '1'
-    size: '1024'
-    srate: samp_rate
+    size: '342'
+    srate: samp_rate/M
     stemplot: 'False'
     style1: '1'
     style10: '1'
@@ -283,10 +235,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1024, 352.0]
+    coordinate: [872, 368.0]
     rotation: 0
     state: enabled
-- name: qtgui_time_sink_x_1
+- name: qtgui_time_sink_x_0_0
   id: qtgui_time_sink_x
   parameters:
     affinity: ''
@@ -301,7 +253,7 @@ blocks:
     alpha7: '1.0'
     alpha8: '1.0'
     alpha9: '1.0'
-    autoscale: 'False'
+    autoscale: 'True'
     axislabels: 'True'
     color1: blue
     color10: dark blue
@@ -316,7 +268,7 @@ blocks:
     comment: ''
     ctrlpanel: 'False'
     entags: 'True'
-    grid: 'False'
+    grid: 'True'
     gui_hint: ''
     label1: Signal 1
     label10: Signal 10
@@ -380,17 +332,15 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1016, 176.0]
+    coordinate: [600, 264.0]
     rotation: 0
     state: enabled
 
 connections:
-- [analog_sig_source_x_0, '0', epy_block_1, '0']
-- [analog_sig_source_x_1, '0', epy_block_0, '0']
-- [blocks_throttle2_0, '0', qtgui_time_sink_x_1, '0']
-- [blocks_throttle2_1, '0', qtgui_time_sink_x_0, '0']
-- [epy_block_0, '0', blocks_throttle2_1, '0']
-- [epy_block_1, '0', blocks_throttle2_0, '0']
+- [blocks_file_source_0, '0', blocks_throttle2_0, '0']
+- [blocks_throttle2_0, '0', epy_block_0, '0']
+- [blocks_throttle2_0, '0', qtgui_time_sink_x_0_0, '0']
+- [epy_block_0, '0', qtgui_time_sink_x_0, '0']
 
 metadata:
   file_format: 1
