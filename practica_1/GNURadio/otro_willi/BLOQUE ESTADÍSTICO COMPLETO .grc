@@ -89,7 +89,7 @@ blocks:
     alias: ''
     begin_tag: pmt.PMT_NIL
     comment: ''
-    file: C:\Users\willi\OneDrive\Desktop\comunicaciones-2\2026_2_ComII_A1_A1E\GNURadio\implementacion\ecg_100.bin
+    file: C:\Users\willi\OneDrive\Desktop\comunicaciones-2\2026_2_ComII_A1_A1E\practica_1\GNURadio\otro_willi\implementacion\ecg_100.bin
     length: '0'
     maxoutbuf: '0'
     minoutbuf: '0'

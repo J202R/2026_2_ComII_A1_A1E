@@ -334,7 +334,7 @@ class untitled(gr.top_block, Qt.QWidget):
         self.epy_block_2 = epy_block_2.blk()
         self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_float*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.blocks_moving_average_xx_0 = blocks.moving_average_ff(7, (1/7), 4000, 1)
-        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_float*1, 'C:\\Users\\willi\\OneDrive\\Desktop\\comunicaciones-2\\2026_2_ComII_A1_A1E\\GNURadio\\implementacion\\ecg_100.bin', True, 0, 0)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_float*1, 'C:\\Users\\willi\\OneDrive\\Desktop\\comunicaciones-2\\2026_2_ComII_A1_A1E\\practica_1\\GNURadio\\otro_willi\\implementacion\\ecg_100.bin', True, 0, 0)
         self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_add_xx_0 = blocks.add_vff(1)
         self.analog_noise_source_x_0 = analog.noise_source_f(analog.GR_GAUSSIAN, 0.1, 0)
