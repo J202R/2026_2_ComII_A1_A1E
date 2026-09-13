@@ -1,0 +1,101 @@
+% To load packages
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} 
+\usepackage[english]{babel}
+\usepackage[letter,left=2.0cm,top=2.0cm,right=2.0cm,bottom=4.0cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{array}
+\usepackage{graphicx,color,enumerate}	
+\usepackage{multirow} 
+\usepackage{multicol}
+\usepackage{authblk}
+\usepackage{charter}    % Font typeface
+\usepackage{titling}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+\definecolor{uisgreen}{RGB}{125,194,3}
+\definecolor{gray97}{gray}{.97}
+\definecolor{gray75}{gray}{.75}
+\definecolor{gray45}{gray}{.45}
+
+\setlength{\droptitle}{-1.8cm}
+\pagestyle{fancy}
+
+%%% Header definition
+\headheight=60pt 						% header height 
+\renewcommand{\headrulewidth}{4pt}
+\let\oldheadrule\headrule% Copy \headrule into \oldheadrule
+\renewcommand{\headrule}{\color{uisgreen}\oldheadrule}
+
+\fancyhead[L]{%
+    \begin{minipage}{2.2cm}
+        \includegraphics[height=1.1cm]{./figs/uislogohoriz.png} 
+    \end{minipage}%
+    \hspace{0.3cm} % <--- ESTO SEPARA EL TEXTO DEL LOGO
+    \begin{minipage}{8cm}
+        \color{uisgreen}\raggedright
+        \fontsize{8}{9}\selectfont
+        \textbf{Universidad Industrial de Santander}\\[0.05cm]
+        \textsf{Escuela de Ingenierías Eléctrica,}\\
+        \textsf{Electrónica y de Telecomunicaciones}
+    \end{minipage}
+}
+\fancyhead[R] { 							%la "C" indica al centro
+	\begin{minipage}{8cm}
+	    \color{uisgreen}
+	    \begin{flushright}
+    	    \small{\textsf{COMUNICACIONES II (27145)}} \\
+            \normalsize{\textsf{\dochead: \textbf{\docsubhead}}} \\
+    	    \small{\textsf{Grupo:
+            \textbf{\teamname}}}
+	    \end{flushright}
+    \end{minipage}
+    \begin{minipage}{1.2cm}
+		\includegraphics[width=1.0\textwidth]{./figs/logoE3T.png} 
+	\end{minipage}	
+}
+%%% End header definition
+
+\lstset{ frame=Ltb,
+     framerule=0pt,
+     aboveskip=0.5cm,
+     framextopmargin=3pt,
+     framexbottommargin=3pt,
+     framexleftmargin=0.4cm,
+     framesep=0pt,
+     rulesep=.4pt,
+     backgroundcolor=\color{gray97},
+     rulesepcolor=\color{black},
+     %
+     stringstyle=\ttfamily\color{red!50!brown},
+     showstringspaces = false,
+     basicstyle=\small\ttfamily,
+     commentstyle=\color{gray45},
+     keywordstyle=\color{blue}\bfseries,
+     %
+     numbers=left,
+     numbersep=15pt,
+     numberstyle=\tiny,
+     numberfirstline = false,
+     breaklines=true,
+   }
+
+% minimizar fragmentado de listados
+\lstnewenvironment{listing}[1][]
+   {\lstset{#1}\pagebreak[0]}{\pagebreak[0]}
+
+\lstdefinestyle{consola}
+   {basicstyle=\scriptsize\bf\ttfamily,
+    backgroundcolor=\color{gray75},
+   }
+
+\lstdefinestyle{C}
+   {language=C,
+   }
+
