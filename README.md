@@ -2,192 +2,250 @@
 
 <img src="https://img.shields.io/badge/UIS-Universidad%20Industrial%20de%20Santander-1B5E20?style=for-the-badge" alt="UIS"/>
 
-# 📡 CommII_A1_A1E
+# 🚀 Proyecto Integrador — Fase 2. Modelado y Simulación
 
-
-### Comunicaciones II — 27145
+### Comunicaciones II (27145) — Grupo A1-E
 **Escuela de Ingenierías Eléctrica, Electrónica y de Telecomunicaciones**
-*Facultad de Ingenierías Físico Mecánicas*
 
-<img src="https://img.shields.io/badge/Rama-main-2ea44f?style=flat-square" />
-<img src="https://img.shields.io/badge/GNU%20Radio-SDR-blue?style=flat-square" />
-<img src="https://img.shields.io/badge/Linux-Ubuntu-orange?style=flat-square&logo=linux&logoColor=white" />
-<img src="https://img.shields.io/badge/Lenguaje-Python-yellow?style=flat-square&logo=python&logoColor=white" />
-<img src="https://img.shields.io/badge/status-en%20desarrollo-brightgreen?style=flat-square" />
+<img src="https://img.shields.io/badge/Rama-Fase__2-2ea44f?style=flat-square" />
+<img src="https://img.shields.io/badge/Modulación-16--QAM-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Aplicación-DCI-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Simulación-GNU%20Radio%20%7C%20Python-orange?style=flat-square" />
+<img src="https://img.shields.io/badge/status-Modelado%20y%20Simulación-success?style=flat-square" />
 
-*"Construimos Futuro"*
+*Semanas 7-9: 14 de septiembre – 4 de octubre de 2026*
 
 </div>
 
-## 👥 Integrantes
-
-| Nombre completo | Rol |
-|---|---|
-| Jarol Nicolás Molano López | Estudiante |
-| William Camilo Motta Chacón | Estudiante |
-| Juan Andrés Rojas Rueda | Estudiante |
-
-
-> 💡 **Nota:** este README corresponde únicamente a la rama **`main`**. Cada rama de práctica (`Practica_1`, `Practica_2`, etc.) cuenta con su propio README donde se detalla el desarrollo específico de esa entrega.
+> 📌 Esta rama corresponde a la **Entrega 2: Informe + Git**. Aquí se construye la cadena completa de transmisión y recepción 16-QAM en simulación, se inyectan AWGN e interferencia controlada y se evalúa el desempeño mediante curvas BER vs. SNR y métricas espectrales.
 
 ---
 
 ## 📑 Tabla de contenido
 
-- [Descripción del repositorio](#-descripción-del-repositorio)
-- [Integrantes](#-integrantes)
-- [Estructura de ramas](#-estructura-de-ramas)
-- [Estructura de directorios](#-estructura-de-directorios)
-- [Tecnologías y herramientas](#-tecnologías-y-herramientas)
-- [Cómo clonar el repositorio](#-cómo-clonar-el-repositorio)
-- [Flujo de trabajo (workflow) en Git](#-flujo-de-trabajo-workflow-en-git)
-- [Buenas prácticas](#-buenas-prácticas)
-- [Créditos](#-créditos)
+- [Integrantes y roles](#-integrantes-y-roles)
+- [Contexto: del diseño a la simulación](#-contexto-del-diseño-a-la-simulación)
+- [Objetivos de la Fase 2](#-objetivos-de-la-fase-2)
+- [Arquitectura del sistema simulado](#-arquitectura-del-sistema-simulado)
+- [Parámetros del sistema](#-parámetros-del-sistema)
+- [Modelado del canal](#-modelado-del-canal)
+- [Evidencias y gráficas requeridas](#-evidencias-y-gráficas-requeridas)
+- [Evaluación de desempeño (BER vs. SNR)](#-evaluación-de-desempeño-ber-vs-snr)
+- [Flujo de trabajo en Git](#-flujo-de-trabajo-en-git)
+- [Entregables y lista de verificación](#-entregables-y-lista-de-verificación)
+- [Cómo ejecutar la simulación](#-cómo-ejecutar-la-simulación)
+- [Estructura del repositorio](#-estructura-del-repositorio)
 
 ---
 
-## 📖 Descripción del repositorio
+## 👥 Integrantes y roles
 
-Este repositorio contiene el desarrollo práctico del curso **Comunicaciones II (27145)** de la **Universidad Industrial de Santander**, correspondiente al grupo **A1_A1E**. Aquí se documentan y almacenan los laboratorios, algoritmos y aplicaciones desarrolladas a lo largo del semestre, incluyendo:
+| Integrante | Código | Rol | Responsabilidades en la Fase 2 |
+|---|---|---|---|
+| **Jarol Nicolas Molano Lopez** | `2230391` | **Líder de Proyecto y Gestor de Git** | Gestiona ramas y *pull requests*, integra los avances y coordina la redacción del informe IEEE. |
+| **Juan Andres Rojas Rueda** | `2231065` | **Encargado de Modelado y Simulación** | Implementa Tx/Rx (GNU Radio / Python), curvas BER vs. SNR y gráficas de desempeño. |
+| **William Camilo Motta Chacón** | `2234639` | **Encargado de SDR y Canal** | Modela AWGN e interferencia controlada, define parámetros de canal y prepara la transición hacia el hardware SDR (Fase 3). |
 
-- 🔧 Configuración inicial de Git/GitHub y gestión de la información (Laboratorio 1).
-- 📻 Programación de bloques personalizados en **GNU Radio** para radio definida por software — *SDR* (Laboratorio 2 en adelante).
-- 📊 Implementación de bloques de estadística, acumulador y diferenciador aplicados a señales reales.
+---
 
-Cada práctica realizada en el laboratorio se organiza en una rama independiente, y dentro de esa rama cada integrante desarrolla su propio trabajo en una subrama personal, tal como se describe más adelante.
+## 📖 Contexto: del diseño a la simulación
 
+En la **Fase 1** se definió la aplicación: **Interconexión de Centros de Datos (DCI)** sobre enlaces ópticos de alta capacidad, con **16-QAM** como modulación (4 bits/símbolo) y un filtro conformador **RRC**.
 
+En la **Fase 2** se valida ese diseño en un entorno simulado antes de cualquier despliegue en hardware. La simulación permite aislar los efectos del canal, probar el esquema de modulación y validar la mitigación de interferencia bajo condiciones **controladas y repetibles**.
 
-## 🌳 Estructura de ramas
+---
 
-El repositorio sigue un modelo de ramas organizado por **práctica** y por **integrante**, de forma que el trabajo de cada persona sea trazable de manera independiente antes de integrarse a la rama principal de cada práctica.
+## 🎯 Objetivos de la Fase 2
 
+**Objetivo general:** implementar el modelo en software del sistema de comunicación digital 16-QAM, simulando las restricciones del canal (AWGN e interferencia controlada) y evaluando su desempeño mediante curvas BER vs. SNR e informes técnicos formales.
+
+**Objetivos específicos**
+
+1. Modelar los bloques del transmisor, el canal con interferencia y el receptor en la plataforma de simulación seleccionada.
+2. Evaluar el impacto de la ISI, el ruido y la interferencia mediante PSD, diagramas de ojo y constelaciones.
+3. Consolidar el trabajo colaborativo con el uso estricto de ramas (*branching*) en Git y un informe técnico en formato IEEE.
+
+---
+
+## 🧩 Arquitectura del sistema simulado
+
+```text
+┌────────────────┐   ┌──────────────────────┐   ┌───────────────────┐
+│ Fuente de datos│──►│ Mapeo 16-QAM         │──►│ Filtro Tx (RRC)   │
+│ (bits)         │   │ (4 bits/símbolo)     │   │                   │
+└────────────────┘   └──────────────────────┘   └─────────┬─────────┘
+                                                          ▼
+┌────────────────┐   ┌──────────────────────┐   ┌───────────────────┐
+│ Demodulador y  │◄──│ Canal: AWGN          │◄──│ Inyección de      │
+│ sumidero       │   │                      │   │ interferencia     │
+└───────┬────────┘   └──────────────────────┘   └───────────────────┘
+        ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│ Filtro acoplado RRC → muestreo óptimo → decisión → análisis:         │
+│ BER, constelación, diagrama de ojo, PSD                              │
+└──────────────────────────────────────────────────────────────────────┘
 ```
+
+**Bloques del transmisor:** generación de bits → asignación de constelación → filtrado RRC.
+**Bloques del receptor:** filtro acoplado RRC → muestreo óptimo → demodulación (decisión por mínima distancia).
+
+---
+
+## ⚙️ Parámetros del sistema
+
+Relaciones fundamentales (según la Guía 1):
+
+| Variable | Significado | Relación |
+|---|---|---|
+| `M` | Número de símbolos | `M = len(tabla_de_verdad_constelacion) = 16` |
+| `bps` | Bits por símbolo | `bps = log2(M) = 4` |
+| `Rs` | Tasa de símbolos | Valor de referencia del sistema |
+| `Rb` | Tasa de bits | `Rb = Rs × bps` |
+| `Sps` | Muestras por símbolo | Definida por el diseño |
+| `samp_rate` | Tasa de muestreo | `samp_rate = Rs × Sps` |
+| `β` (roll-off) | Factor del RRC | Compromiso entre ancho de banda e ISI |
+| `BW` | Ancho de banda ocupado | `BW ≈ Rs × (1 + β)` |
+
+**Valores base de partida** (tomados de los flujogramas de la Guía 1; ajustar y documentar en el informe si el equipo los modifica):
+
+| Parámetro | Valor base |
+|---|---|
+| `Rs` | 32 kBd |
+| `Sps` | 8 |
+| `samp_rate` | 256 kHz |
+| `Rb` | 128 kbps |
+| `β` | *por definir (p. ej. 0.35)* |
+
+**Tabla de constelación 16-QAM** (orden de la guía; el orden define qué grupo de bits selecciona cada punto):
+
+```text
+(-3-3j, -1-3j, 1-3j, 3-3j, 3-1j, 1-1j, -1-1j, -3-1j,
+ -3+1j, -1+1j, 1+1j, 3+1j, 3+3j, 1+3j, -1+3j, -3+3j)
+```
+
+> 💡 Se recomienda conservar `Rs` y `Sps` entre pruebas y variar solo una cosa a la vez (ruido o interferencia), para distinguir qué efectos provienen de cada fuente.
+
+---
+
+## 🌊 Modelado del canal
+
+| Componente | Descripción | Parámetro de control |
+|---|---|---|
+| **AWGN** | Ruido térmico blanco gaussiano aditivo, configurable en potencia/SNR. | SNR (dB) / `noise_amp` |
+| **Interferencia controlada** | Según el escenario de la Fase 1: interferencia senoidal de banda estrecha, señal modulada interferente (análogo al *crosstalk* DWDM) o ruido impulsivo. | Potencia relativa (SIR) y frecuencia de la interferencia |
+
+**Escenarios de simulación**
+
+| # | Escenario | Descripción |
+|---|---|---|
+| 1 | Ideal | Sin ruido ni interferencia (referencia). |
+| 2 | Solo AWGN | Barrido de SNR. |
+| 3 | AWGN + interferencia | Interferencia controlada con distintas potencias. |
+
+---
+
+## 📈 Evidencias y gráficas requeridas
+
+Para **cada escenario** (con y sin interferencia):
+
+1. **Dominio del tiempo:** envolvente compleja (I/Q) y señal a la salida del canal.
+2. **Dominio de la frecuencia:** PSD de la señal transmitida comparada con la PSD de la interferencia y del ruido.
+3. **Diagrama de constelación:** comparativa en el plano complejo de **Tx**, **Rx sin ruido** y **Rx degradado**.
+4. **Diagrama de ojo:** evaluación de la ISI tras el filtro acoplado.
+
+---
+
+## 📊 Evaluación de desempeño (BER vs. SNR)
+
+- Curva **BER vs. SNR simulada** (Monte Carlo) para 16-QAM con AWGN, y con interferencia.
+- Comparación contra la **curva teórica** de 16-QAM con codificación Gray:
+
+  `BER ≈ (3/8) · erfc( √( 2·Eb/N0 / 5 ) )`
+
+- Análisis de la degradación (en dB) producida por la interferencia respecto al caso solo AWGN.
+- Cantidad de bits suficiente por punto de SNR para obtener una estimación estadísticamente confiable.
+
+---
+
+## 🌿 Flujo de trabajo en Git
+
+Uso **estricto de ramas**: nadie hace *commit* directo a `main`.
+
+```text
 main
- ├── Practica_1                 → Rama de "preproducción" del Laboratorio 2 (Práctica 1)
- │     ├── P1_Jarol             → Desarrollo individual de Jarol para la Práctica 1
- │     ├── P1_Juan              → Desarrollo individual de Juan para la Práctica 1
- │     └── P1_william           → Desarrollo individual de William para la Práctica 1
- │
- └── Practica_2                 → Rama de "preproducción" del Laboratorio 3 (Práctica 2)
-       ├── P2_Jarol             → Desarrollo individual de Jarol para la Práctica 2
-       ├── P2_Juan              → Desarrollo individual de Juan para la Práctica 2
-       └── P2_Willi             → Desarrollo individual de William para la Práctica 2
+ └── fase-2                      → rama de integración de la fase
+      ├── fase-2/modelado-txrx   → Juan Andres (Tx/Rx, BER)
+      ├── fase-2/canal-interf    → William Camilo (AWGN + interferencia)
+      └── fase-2/informe-ieee    → Jarol Nicolas (informe e integración)
 ```
-
-### 🔎 ¿Qué contiene cada tipo de rama?
-
-| Rama | Descripción |
-|---|---|
-| **`main`** | Rama principal y estable del repositorio. Contiene este README y sirve como base histórica del proyecto. |
-| **`Practica_1` / `Practica_2`** | Ramas de integración por práctica. Son la **vista de preproducción** que revisa el docente: aquí cada integrante hace *merge* de su rama personal una vez su parte está lista. Contienen los directorios `GNURadio` e `Informe` con el desarrollo consolidado del grupo para esa práctica. |
-| **`P{N}_Nombre`** | Ramas personales de trabajo (ej. `P1_Jarol`, `P2_Willi`). Contienen los **archivos temporales y de desarrollo individual** de cada integrante: flowgraphs de GNU Radio (`.grc`), bloques de Python en construcción, pruebas y avances propios antes de integrarlos a la rama de la práctica correspondiente. |
-
-
-
----
-
-## 📁 Estructura de directorios
-
-```
-CommII_A1_A1E/
-├── README.md
-├── Practica_1/
-│   ├── GNURadio/        → Flowgraphs (.grc) y bloques de Python
-│   └── Informe/         → Informe en formato LaTeX
-└── Practica_2/
-    ├── GNURadio/
-    └── Informe/
-```
-
----
-
-## 🛠 Tecnologías y herramientas
-
-| Herramienta | Uso |
-|---|---|
-| ![Linux](https://img.shields.io/badge/-Linux%20Ubuntu-orange?logo=linux&logoColor=white) | Sistema operativo de trabajo |
-| ![Git](https://img.shields.io/badge/-Git-F05032?logo=git&logoColor=white) | Control de versiones |
-| ![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=white) | Alojamiento y gestión del repositorio |
-| ![GNU Radio](https://img.shields.io/badge/-GNU%20Radio-5A5A5A) | Radio definida por software (SDR) |
-| ![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white) | Bloques personalizados en GNU Radio |
-| ![LaTeX](https://img.shields.io/badge/-LaTeX-008080?logo=latex&logoColor=white) | Redacción de informes |
-
----
-
-## ⬇️ Cómo clonar el repositorio
-
-### 1. Requisitos previos
-- Tener `git` instalado en la terminal de Linux.
-- Contar con un **Personal Access Token (classic)** de GitHub (necesario para autenticarse al hacer `push`).
-
-### 2. Clonar usando HTTPS
 
 ```bash
-git clone https://github.com/<usuario>/CommII_A1_A1E.git
+git checkout -b fase-2/modelado-txrx     # crear rama de trabajo
+git add . && git commit -m "feat: filtro RRC y receptor 16-QAM"
+git push -u origin fase-2/modelado-txrx  # abrir Pull Request hacia fase-2
 ```
 
-### 3. Ingresar al directorio del proyecto
-
-```bash
-cd CommII_A1_A1E
-```
-
-### 4. Ver las ramas disponibles
-
-```bash
-git branch -a
-```
-
-### 5. Cambiar a la rama de la práctica que necesitas revisar
-
-```bash
-git checkout Practica_1
-# o, para ver el trabajo individual de un integrante:
-git checkout P1_Jarol
-```
-
-### 6. Mantener tu copia local actualizada
-
-```bash
-git pull
-```
-
-> 🔑 Al ejecutar `git push` por primera vez, Git pedirá usuario y contraseña: el **usuario** es tu usuario de GitHub y la **contraseña** es el *token* generado (no la contraseña de tu cuenta).
+- Los *pull requests* son revisados y aprobados por el Gestor de Git.
+- Mensajes de *commit* descriptivos (`feat:`, `fix:`, `docs:`).
+- Al cierre de la fase, `fase-2` se integra a `main` con una etiqueta (`v2.0-fase2`).
 
 ---
 
-## 🔄 Flujo de trabajo (workflow) en Git
+## ✅ Entregables y lista de verificación
 
-1. Cada práctica nueva parte de `main` y crea su rama `Practica_N`.
-2. Dentro de `Practica_N`, cada integrante crea su propia subrama `PN_Nombre`.
-3. Cada integrante trabaja y hace *commits* en **su propia subrama**:
-   ```bash
-   git add .
-   git commit -m "Descripción del cambio"
-   git push
-   ```
-4. Cuando su parte está lista, se hace **merge** de la subrama personal hacia la rama de la práctica correspondiente (`Practica_N`), que funciona como la versión de "preproducción" revisada por el docente.
-5. Al finalizar el semestre, la rama `main` se mantiene como la rama estable de referencia del repositorio.
+**Entrega 2: Informe + Git**
 
----
-
-## ✅ Buenas prácticas
-
-- Realizar *commits* pequeños y con mensajes descriptivos.
-- No trabajar directamente sobre `main` ni sobre las ramas `Practica_N`; usar siempre la subrama personal.
-- Actualizar (`git pull`) antes de empezar a trabajar cada sesión.
-- Verificar con `git status` los cambios antes de cada `commit`.
-- Mantener los archivos de cada práctica dentro de su directorio correspondiente (`GNURadio` / `Informe`).
+- [ ] Informe técnico en **formato IEEE** (≈ 3-5 páginas).
+- [ ] Flujogramas / scripts de simulación **plenamente funcionales** (`.grc`, `.m` o `.py`).
+- [ ] Transmisor 16-QAM con filtro RRC (Rs, samp_rate y β configurados).
+- [ ] Receptor con filtro acoplado, muestreo óptimo y demodulador.
+- [ ] Canal con AWGN configurable e interferencia controlada.
+- [ ] Gráficas de tiempo, PSD y constelación (Tx, Rx sin ruido, Rx degradado).
+- [ ] Diagrama de ojo.
+- [ ] Curva BER vs. SNR (simulada vs. teórica).
+- [ ] Historial de Git con ramas y *pull requests* aprobados.
 
 ---
 
-## 🏫 Créditos
+## ▶️ Cómo ejecutar la simulación
 
-Proyecto desarrollado como parte del curso **Comunicaciones II (27145)** — Escuela de Ingenierías Eléctrica, Electrónica y de Telecomunicaciones, **Universidad Industrial de Santander (UIS)**.
+**Requisitos:** Linux o Windows, Git, y GNU Radio Companion y/o Python 3 (`numpy`, `scipy`, `matplotlib`).
 
-<div align="center">
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd 2026_2_ComII_A1_A1E
+git checkout fase-2
 
-*Construimos Futuro* 🇨🇴
+# Python
+pip install numpy scipy matplotlib
+python Fase_2_Modelado_y_Simulacion/Entrega_2/codigo/simulacion_16qam.py
 
-</div>
+# GNU Radio
+gnuradio-companion Fase_2_Modelado_y_Simulacion/Entrega_2/flujogramas/16QAM_AWGN.grc
+```
+
+> Los nombres de archivos anteriores son ilustrativos; ajustarlos a los que finalmente contenga el repositorio.
+
+---
+
+## 📁 Estructura del repositorio
+
+```text
+2026_2_ComII_A1_A1E/
+├── README.md                                 → Documentación principal del repositorio
+├── Fase_1_Diseno_y_Planeacion/               → (Semanas 1-3) ✔ Completada
+│   └── Entrega_1/                            → Propuesta técnica preliminar y Git
+├── Fase_2_Modelado_y_Simulacion/             → (Semanas 7-9) 🔄 En curso
+│   └── Entrega_2/
+│       ├── codigo/                           → Scripts de simulación (.py / .m)
+│       ├── flujogramas/                      → Archivos GNU Radio (.grc)
+│       ├── figuras/                          → PSD, constelaciones, ojo, BER vs. SNR
+│       └── informe/                          → Informe técnico en formato IEEE
+├── Fase_3_Implementacion_Experimental/       → (Semanas 6-8)
+│   └── Entrega_3/                            → Integración con SDR y demostración
+├── Fase_4_Validacion_Final/                  → (Semanas 8-10)
+│   └── Documentacion_Tecnica/                → Ajustes y comparación real vs. simulado
+└── Fase_5_Socializacion_y_Evaluacion/        → (Semana 14)
+    └── Presentacion/                         → Soportes para la sustentación final
+```
