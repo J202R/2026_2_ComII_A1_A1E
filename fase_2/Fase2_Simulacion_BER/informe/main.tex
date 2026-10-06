@@ -1,0 +1,409 @@
+\documentclass[twocolumn]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{{figs/}} % No modificar
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{multicol}
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fullflexible,
+    frame=single,
+    numbers=left,
+    numbersep=4pt,
+    numberstyle=\tiny,
+    xleftmargin=1.5em,
+    tabsize=2,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{teal}
+}
+\usepackage[spanish, es-tabla]{babel} % Configura el idioma a español
+\spanishdecimal{.} % Punto decimal también en modo matemático (si falla, usar la opción es-nodecimaldot de babel)
+\addto\captionsspanish{\renewcommand{\abstractname}{Abstract}}
+
+\addto\captionsspanish{\renewcommand{\figurename}{Figura}}
+\addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue, % Cambia el color del número si lo deseas
+    urlcolor=blue,
+}
+
+% \usepackage{ulem}
+% http://ctan.org/pkg/{algorithms,algorithmx}
+% \usepackage{algorithms,algorithmx}
+\renewcommand{\thetable}{\arabic{table}}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor = blue,
+}
+\usepackage{tikz}
+
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+%\numberwithin{equation}{section}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{multirow}
+\newtheorem{theorem}{Theorem}[section]
+\makeatletter
+\newcommand{\settheoremtag}[1]{% \settheoremtag{<tag>}
+  \let\oldthetheorem\thetheorem% Store \thetheorem
+  \renewcommand{\thetheorem}{#1}% Redefine it to a fixed value
+  \g@addto@macro\endtheorem{% At \end{theorem}, ...
+    \addtocounter{theorem}{-1}% ...restore theorem counter value and...
+    \global\let\thetheorem\oldthetheorem}% ...restore \thetheorem
+  }
+\usepackage{titlesec}
+
+% Cambiar tamaño de las secciones
+\titleformat{\section}
+  {\normalsize\bfseries}   % tamaño y estilo (large = un poco más grande que normal)
+  {\thesection}{1em}  % numeración
+  {}
+
+\titleformat{\subsection}
+  {\normalsize\bfseries} % tamaño de subsección
+  {\thesubsection}{1em}
+  {}
+
+% PASO 1. Reemplace "Práctica 1" por el número de la práctica que corresponda
+\newcommand{\dochead}{Proyecto final -- Fase 2}
+
+% PASO 2. Verifique el título de la práctica corresponda.
+\newcommand{\docsubhead}{Modelado y simulación de un enlace 16-QAM con ruido AWGN e interferencia}
+
+% PASO 3. Reemplace "B1A - 02" por el grupo de la asignatura y el número de su grupo de laboratorio
+\newcommand{\teamname}{A1-E}
+
+% PASO 4. OPCIONAL: Reemplace "\docsubhead \docsubhead" por el título del documento en caso de requerirse.
+\newcommand{\titulo}{\dochead: \docsubhead}
+
+% PASO 5. Reemplace "31 de diciembre de 2030" por la fecha de su documento
+\newcommand{\fecha}{Octubre 4, 2026}
+
+\input{./plantilla.tex}             % No modificar
+
+\usepackage{titlesec}
+\titlespacing*{\section}
+{0pt}{1ex}{1ex}  % Ajusta el espacio antes y después de las secciones
+
+\usepackage[hidelinks]{hyperref}
+\begin{document}
+
+% No modificar
+
+\title{\vspace{1cm}\textbf{\titulo}}            % No modificar
+
+% PASO 6. Agregar aquí el nombre y código de los autores.
+\author{
+Jarol Nicolas Molano López - 2230391 \\
+William Camilo Motta Chacón - 2234639\\
+Juan Andres Rojas Rueda - 2231065
+}
+\affil{\small{\url{https://github.com/J202R/2026_2_ComII_A1_A1E}}}
+\affil{\normalsize{Escuela de Ingenierías Eléctrica, Electrónica y de Telecomunicaciones} \\ % No modificar
+\small{Universidad Industrial de Santander}} % No modificar
+
+\date{\today}
+
+\maketitle                          % No modificar
+\thispagestyle{fancy}               % No modificar
+
+%---------------------------------------------------------------
+% PASO 7. **..**...****INICIE SU DOCUMENTO DESDE AQUI***...**...
+
+\begin{abstract}
+This report presents the simulation of the 16-QAM link proposed in Phase 1 for data center interconnection. The conceptual and AWGN flowgraphs were run in GNU Radio at 32~kBd and 8 samples per symbol, and the complex envelope, PSD and constellation were recorded for noise amplitudes between 0.10 and 0.50. A Python model of an equivalent chain, with root-raised-cosine (RRC) filters and a matched filter, was used to obtain BER vs SNR curves with AWGN and with an adjacent 16-QAM channel (SIR $=0$~dB, $\Delta f = 36$~kHz). The simulated BER matched the theoretical Gray-coded curve (12.19~dB for BER $=10^{-4}$); the laboratory symbol table required 0.57~dB more $E_b/N_0$, and the adjacent channel added a penalty of 2.3~dB.
+\end{abstract}
+
+\begin{IEEEkeywords}
+16-QAM, AWGN, BER, GNU Radio, RRC filter
+\end{IEEEkeywords}
+
+\section{Introducción}
+
+El tráfico entre centros de datos, impulsado por la replicación de almacenamiento y las cargas de inteligencia artificial, exige enlaces de interconexión (DCI) de mayor capacidad sin multiplicar la fibra instalada. En la Fase~1 se propuso 16-QAM para este escenario, ya que transmite 4~bits por símbolo y duplica la eficiencia espectral de QPSK \cite{a1e2026fase1, winzer2006advanced}. A cambio, sus 16 símbolos quedan más próximos entre sí, por lo que el ruido acumulado en el enlace y la diafonía entre canales DWDM vecinos provocan errores con mayor facilidad.
+
+El objetivo de esta fase fue cuantificar esa sensibilidad mediante simulación antes de pasar a los radios definidos por software. Para ello se ejecutaron en GNU Radio los flujogramas base de la guía \cite{tijaro2026guia1fase2} con la tabla 16-QAM asignada, se observó la envolvente compleja, la PSD y la constelación para cinco niveles de ruido AWGN y se relacionó cada nivel con una SNR equivalente. Como los flujogramas no incluyen receptor, la curva BER vs SNR y el efecto de la interferencia controlada se obtuvieron con un modelo en Python de una cadena equivalente.
+
+\section{Metodología}
+
+\subsection{Flujogramas en GNU Radio}
+
+Se usaron los dos flujogramas de la guía \cite{tijaro2026guia1fase2} con la tabla 16-QAM asignada y los parámetros de la Tabla~\ref{tab:parametros}. El flujograma conceptual (Fig.~\ref{fig:grc_sin_ruido}a) genera bits aleatorios, los empaqueta (\textit{Pack K Bits}, $K=8$), los agrupa de a 4 (\textit{Packed to Unpacked}), los mapea con \textit{Chunks to Symbols} y los interpola con un pulso rectangular de 8 muestras. El flujograma AWGN (Fig.~\ref{fig:grc_const_awgn}a) suma a esa señal un \textit{Noise Source} gaussiano de amplitud \texttt{noise\_amp}, que se fijó en 0.10, 0.25, 0.32, 0.40 y 0.50; el valor 0.32 es el punto nominal (Sec.~\ref{sub:snr}).
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{grc_flujograma_conceptual.pdf}
+\caption{}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{grc_sin_ruido_tiempo_psd.png}
+\caption{}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{grc_sin_ruido_const.png}
+\caption{}
+\end{subfigure}
+\caption{Simulación sin ruido en GNU Radio: (a) flujograma conceptual; (b) envolvente compleja y PSD; (c) constelación.}
+\label{fig:grc_sin_ruido}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=\linewidth]{grc_flujograma_awgn.pdf}
+\caption{}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.85\linewidth]{grc_n010_const.png}
+\caption{\texttt{noise\_amp} = 0.10}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.85\linewidth]{grc_n025_const.png}
+\caption{\texttt{noise\_amp} = 0.25}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.85\linewidth]{grc_n032_const.png}
+\caption{\texttt{noise\_amp} = 0.32 (punto nominal)}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.85\linewidth]{grc_n040_const.png}
+\caption{\texttt{noise\_amp} = 0.40}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.85\linewidth]{grc_n050_const.png}
+\caption{\texttt{noise\_amp} = 0.50}
+\end{subfigure}
+\caption{Simulación con AWGN en GNU Radio: (a) flujograma; (b)--(f) constelación recibida (todas las muestras, sin filtro acoplado).}
+\label{fig:grc_const_awgn}
+\end{figure}
+
+\begin{table}[!ht]
+\centering
+\caption{Parámetros de la simulación}
+\label{tab:parametros}
+\footnotesize
+\begin{tabular}{lc}
+\toprule
+\textbf{Parámetro} & \textbf{Valor} \\
+\midrule
+Tasa de símbolos $R_s$ & 32 kBd \\
+Muestras por símbolo $S_{ps}$ & 8 \\
+Frecuencia de muestreo $f_s = R_s S_{ps}$ & 256 kHz \\
+Tasa de bits $R_b = 4R_s$ & 128 kb/s \\
+Potencia media de la constelación $E_s$ & 10 \\
+\texttt{noise\_amp} & 0.10, 0.25, 0.32, 0.40, 0.50 \\
+Filtro RRC (Python) & $\beta = 0.35$ \\
+Separación del canal vecino $\Delta f$ & 36 kHz \\
+Relación señal a interferencia & SIR $=0$ dB \\
+Rango de $E_b/N_0$ (Python) & 0--16 dB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Relación entre \texttt{noise\_amp} y la SNR}
+\label{sub:snr}
+
+El \textit{Noise Source} complejo reparte la amplitud $A$ entre I y Q \cite{gnuradioNoiseSource}, por lo que la potencia del ruido es $A^2$ y la SNR por muestra es $E_s/A^2$. Un filtro acoplado promedia las $S_{ps}$ muestras de cada símbolo, con $N_0=A^2/S_{ps}$, de modo que
+\begin{equation}
+\frac{E_s}{N_0} = S_{ps}\frac{E_s}{A^2}, \qquad \frac{E_b}{N_0} = \frac{1}{4}\frac{E_s}{N_0}.
+\label{eq:snr}
+\end{equation}
+La BER teórica de 16-QAM con codificación Gray es \cite{proakis2008digital, sklar2001digital}
+\begin{equation}
+P_b \approx \frac{3}{8}\,\mathrm{erfc}\!\left(\sqrt{\frac{2}{5}\frac{E_b}{N_0}}\right).
+\label{eq:ber}
+\end{equation}
+En GNU Radio el pulso rectangular de $S_{ps}$ muestras tiene energía $S_{ps}$, por lo que un filtro acoplado añadiría $10\log_{10}S_{ps}=9$~dB; sin él, la decisión sobre una muestra corresponde a $E_b/N_0 = (E_s/A^2)_{\mathrm{dB}} - 6$~dB. En Python el RRC se normaliza a energía unitaria, de modo que $E_s/N_0 = E_s/\sigma^2$ a la salida del filtro acoplado.
+
+La selección de $\texttt{noise\_amp} = 0.32$ busca emular, mediante un modelo AWGN, el efecto neto del ruido óptico acumulado, la distancia del enlace y la reducción del OSNR, propios de los enlaces sobre fibra óptica usados en interconexión entre centros de datos. En estos se requiere un $E_b/N_0$ con margen sobre el umbral teórico de $12.19$~dB (BER $=10^{-4}$) para obtener una tasa de error prácticamente nula tras el filtrado acoplado. Se fijó $\texttt{noise\_amp}=0.32$, que equivale a $E_b/N_0\approx 22.9$~dB con filtro acoplado ($\gamma_b = 195.88$), es decir, $10.73$~dB sobre el umbral. Despejando $A$ de la Ec.~\eqref{eq:snr} con ese $\gamma_b$, $E_s = 10$ y $S_{ps} = 8$:
+\begin{equation}
+A = \sqrt{\frac{S_{ps}\,E_s}{4\,\gamma_b}}
+  = \sqrt{\frac{8\cdot 10}{4\cdot 195.88}} \approx 0.3195 \approx 0.32 .
+\end{equation}
+Así, $\texttt{noise\_amp} = 0.32$ equivale a una $\mathrm{SNR}_{\text{muestra}} = E_s/A^2 = 19.9$~dB. Con filtro acoplado esto da $E_b/N_0 \approx 22.9$~dB; sin él, como en la constelación de GNU Radio (Fig.~\ref{fig:grc_const_awgn}d), corresponde a $E_b/N_0 \approx 13.9$~dB, y aun así las muestras prácticamente no cruzan los umbrales de decisión ($0$ y $\pm 2$): la BER es de $8.1\times10^{-6}$ con una muestra por símbolo (Tabla~\ref{tab:noiseamp}).
+
+En el modelo de Python el RRC se normaliza a energía unitaria, por lo que $E_b/N_0=14$~dB ($E_s/N_0=20$~dB) implica $\sigma^2=E_s/100=0.1$, es decir, $A\approx0.32$: las Figs.~\ref{fig:ojo} y~\ref{fig:const_rx} corresponden al mismo ruido que la Fig.~\ref{fig:grc_const_awgn}d. La diferencia entre 13.9~dB y 14~dB es solo el redondeo de $A$.
+
+\subsection{Modelo en Python para la curva BER}
+
+Como los flujogramas no tienen receptor, la BER se calculó en Python \cite{harris2020numpy, virtanen2020scipy} con la misma tabla y parámetros, agregando filtro RRC en Tx, filtro acoplado RRC en Rx, muestreo en el instante óptimo, detección por mínima distancia y conteo de bits erróneos (Listado~\ref{lst:simulacion}). Se simularon $1.2\times10^6$ a $3.6\times10^6$ bits por punto. Se comparó la tabla del laboratorio con una codificación Gray (Fig.~\ref{fig:mapeo}) y se agregó una interferencia definida por $\text{SIR}=P_s/P_i$: un canal 16-QAM vecino de igual potencia separado 36~kHz, que emula la diafonía DWDM.
+
+\begin{lstlisting}[language=Python, caption={Cadena Tx--canal--Rx en Python}, label={lst:simulacion}]
+idx = bits_a_indices(bits)
+x = tx_rrc(tabla[idx])               # Tx RRC
+r = x + awgn(len(x), ES/esn0, rng)   # canal
+r += interferencia                   # canal vecino
+y = rx_rrc(r, n_sim)                 # filtro acoplado
+ber = np.mean(indices_a_bits(detectar(y)) != bits)
+\end{lstlisting}
+
+\subsection{Codificación Gray frente a la tabla del laboratorio}
+
+Se optó por comparar la tabla 16-QAM asignada con su equivalente en codificación Gray. El flujograma de GNU Radio asigna cada grupo de 4~bits al punto que ocupa esa posición en la tabla \texttt{tabla\_de\_verdad\_constelacion} y no incluye ningún bloque que aplique la codificación Gray. La tabla de la guía tampoco la cumple (Fig.~\ref{fig:mapeo}a): dos símbolos vecinos difieren en promedio en 2.33~bits y, en el peor caso, en 4. Por ello, un error de símbolo hacia un punto adyacente puede producir varios bits erróneos y la BER aumenta. La codificación Gray (Fig.~\ref{fig:mapeo}b) se obtiene reordenando la tabla: los dos primeros bits seleccionan el nivel de I y los dos últimos el de Q, con el orden $00,01,11,10$ para $-3,-1,1,3$, de modo que los puntos adyacentes difieren en un solo bit.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.8\linewidth]{fig_mapeo.pdf}
+\caption{Asignación de bits a los símbolos 16-QAM: (a) tabla del laboratorio; (b) codificación Gray (los dos primeros bits seleccionan I y los dos últimos Q).}
+\label{fig:mapeo}
+\end{figure}
+
+\subsection{Interferencia de canal adyacente}
+
+Adicionalmente se introdujo una fuente de interferencia controlada, acorde con el ámbito de la aplicación. En las fibras ópticas empleadas para la interconexión de centros de datos se multiplexan varias transmisiones en longitud de onda, y aunque cada canal ocupa su propia longitud de onda, el crosstalk en los multiplexores o los efectos no lineales de la fibra pueden hacer que parte de la energía de un canal vecino llegue al receptor. Esta situación equivale a una multiplexación deficiente y para representarla se adicionó a la señal recibida un segundo canal 16-QAM, con el mismo filtro RRC y la misma potencia, desplazado en frecuencia, y la interferencia se cuantificó mediante la relación señal a interferencia, $\mathrm{SIR}=P_s/P_i$ \cite{goldsmith2005wireless}, evaluando su efecto sobre la BER y sobre la constelación a la salida del filtro acoplado con $\Delta f = 36$~kHz e igual potencia ($\mathrm{SIR}=0$~dB).
+
+\section{Resultados y análisis}
+
+\subsection{Señal sin ruido}
+
+En la Fig.~\ref{fig:grc_sin_ruido}b, I y Q toman solo los niveles $\pm1$ y $\pm3$ y la PSD tiene forma $\text{sinc}^2$ con nulos cada $R_s = 32$~kHz. La constelación de la Fig.~\ref{fig:grc_sin_ruido}c muestra los 16 puntos de la tabla.
+
+\subsection{Efecto del ruido AWGN}
+
+Las Figs.~\ref{fig:grc_const_awgn}b--\ref{fig:grc_const_awgn}f muestran que cada símbolo se convierte en una nube: cerca de $\pm0.2$ con $A=0.10$ y hasta $\pm1$ con $A=0.50$, donde algunas muestras cruzan los umbrales en $0$ y $\pm2$. En la Fig.~\ref{fig:grc_tiempo_awgn}, I y Q fluctúan cada vez más y el ruido llena los nulos de la PSD; según la Ec.~\eqref{eq:snr}, el piso queda 39.0~dB bajo el pico con $A=0.10$ y 25.1~dB con $A=0.50$ (Fig.~\ref{fig:grc_tiempo_awgn}c).
+
+\begin{figure}[!t]
+\centering
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.72\linewidth]{grc_n010_tiempo_psd.png}
+\caption{\texttt{noise\_amp} = 0.10}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.72\linewidth]{grc_n032_tiempo_psd.png}
+\caption{\texttt{noise\_amp} = 0.32}
+\end{subfigure}\\[1mm]
+\begin{subfigure}[b]{\linewidth}
+\centering
+\includegraphics[width=0.72\linewidth]{grc_n050_tiempo_psd.png}
+\caption{\texttt{noise\_amp} = 0.50}
+\end{subfigure}
+\caption{Envolvente compleja y PSD con AWGN en GNU Radio.}
+\label{fig:grc_tiempo_awgn}
+\end{figure}
+
+En la Tabla~\ref{tab:noiseamp}, las columnas de SNR se calcularon con la Ec.~\eqref{eq:snr}; por ejemplo, con $A=0.50$ la SNR por muestra es $10/0.5^2 = 40$ (16.0~dB) y, al sumar $10\log_{10}8 = 9.0$~dB del filtro acoplado y restar $10\log_{10}4 = 6.0$~dB, se obtiene $E_b/N_0 = 19.0$~dB. Las columnas de BER se obtuvieron en Python reproduciendo la cadena del flujograma AWGN (pulso rectangular, tabla del laboratorio y ruido de amplitud $A$) con $1.6\times10^6$ bits por caso, decidiendo con una sola muestra por símbolo, como la constelación de GNU Radio, o con filtro acoplado. Sin filtro acoplado la BER llega a $4.0\times10^{-3}$ con $A=0.50$, mientras que con filtro acoplado no hubo errores en ningún caso. Para llegar a $E_b/N_0=10$~dB se necesitaría $A\approx1.41$, fuera del rango del deslizador (0 a 0.5).
+
+\begin{table}[!ht]
+\centering
+\caption{SNR calculada con la Ec.~(\ref{eq:snr}) y BER simulada en Python para cada \texttt{noise\_amp}}
+\label{tab:noiseamp}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\begin{tabular}{cccccc}
+\toprule
+$A$ & SNR/muestra & $E_b/N_0$ & $E_b/N_0$ & BER & BER \\
+ & [dB] & 1 muestra [dB] & con FA [dB] & 1 muestra & con FA \\
+\midrule
+0.10 & 30.0 & 24.0 & 33.0 & $<6.3\times10^{-7}$ & $<6.3\times10^{-7}$ \\
+0.25 & 22.0 & 16.0 & 25.1 & $<6.3\times10^{-7}$ & $<6.3\times10^{-7}$ \\
+0.32 & 19.9 & 13.9 & 22.9 & $8.1\times10^{-6}$ & $<6.3\times10^{-7}$ \\
+0.40 & 18.0 & 12.0 & 21.0 & $3.3\times10^{-4}$ & $<6.3\times10^{-7}$ \\
+0.50 & 16.0 & 10.0 & 19.0 & $4.0\times10^{-3}$ & $<6.3\times10^{-7}$ \\
+\bottomrule
+\end{tabular}\\[1mm]
+\parbox{0.95\linewidth}{\scriptsize FA: filtro acoplado. BER con la tabla del laboratorio. $<6.3\times10^{-7}$: cero errores en $1.6\times10^6$ bits.}
+\end{table}
+
+\subsection{Curva BER vs SNR}
+
+En la Fig.~\ref{fig:ber_awgn}, la curva simulada con codificación Gray coincide con la Ec.~\eqref{eq:ber} (12.19~dB para BER $=10^{-4}$). La tabla del laboratorio no es Gray: sus vecinos difieren hasta en 4~bits (Fig.~\ref{fig:mapeo}a), por lo que multiplica por aproximadamente 2 la BER a 0~dB (0.27 frente a 0.14) y requiere 0.57~dB más de $E_b/N_0$ (Tabla~\ref{tab:penalizacion}).
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.6\linewidth]{fig_ber_awgn.pdf}
+\caption{BER vs SNR en AWGN: teórica (Gray) y simuladas con codificación Gray y con la tabla del laboratorio.}
+\label{fig:ber_awgn}
+\vspace{3mm}
+\includegraphics[width=0.6\linewidth]{fig_psd_interf.pdf}
+\caption{PSD de la señal 16-QAM con filtro RRC, el ruido AWGN y el canal vecino. La franja sombreada es el ancho de banda $R_s(1+\beta)$.}
+\label{fig:psd_interf}
+\end{figure}
+
+\subsection{Efecto de la interferencia}
+
+La Fig.~\ref{fig:psd_interf} muestra que el filtro RRC confina la señal en $\pm21.6$~kHz y que el canal vecino se solapa con su borde. En la Fig.~\ref{fig:ber_interf}, el canal vecino añade 2.3~dB (Tabla~\ref{tab:penalizacion}). Esto se ve en las nubes ensanchadas de la Fig.~\ref{fig:const_rx}c.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.68\linewidth]{fig_ber_interf.pdf}
+\caption{BER vs SNR (Gray) con canal 16-QAM vecino.}
+\label{fig:ber_interf}
+\end{figure}
+
+\subsection{Diagrama de ojo y constelaciones}
+
+Los diagramas de ojo de la Fig.~\ref{fig:ojo} muestran que el par RRC en Tx y filtro acoplado en Rx no introduce interferencia entre símbolos: sin ruido, los cuatro niveles por eje se distinguen en el instante de muestreo. Con $E_b/N_0=14$~dB los ojos se estrechan, pero siguen abiertos, lo que es consistente con una BER del orden de $10^{-6}$ (Fig.~\ref{fig:ber_awgn}). En la Fig.~\ref{fig:const_rx}b las nubes quedan separadas, mientras que con el canal vecino (Fig.~\ref{fig:const_rx}c) se ensanchan y algunos puntos se acercan a los umbrales de decisión.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.6\linewidth]{fig_ojo.pdf}
+\caption{Diagrama de ojo (componente I) a la salida del filtro acoplado: (a) sin ruido; (b) AWGN, $E_b/N_0 = 14$~dB.}
+\label{fig:ojo}
+\end{figure}
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.7\linewidth]{fig_const_rx.pdf}
+\caption{Constelaciones a la salida del filtro acoplado: (a) Tx ideal (equivale al Rx sin ruido, por el criterio de Nyquist); (b) AWGN, $E_b/N_0=14$~dB ($E_s/N_0=20$~dB); (c) AWGN y canal vecino, $\Delta f=36$~kHz, SIR $=0$~dB.}
+\label{fig:const_rx}
+\end{figure}
+
+\begin{table}[!ht]
+\centering
+\caption{$E_b/N_0$ requerido para BER $=10^{-4}$}
+\label{tab:penalizacion}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Escenario} & $E_b/N_0$ [dB] & \textbf{Penalización [dB]} \\
+\midrule
+Teórico (Gray) & 12.19 & -- \\
+AWGN, Gray & 12.19 & 0.00 \\
+AWGN, tabla del laboratorio & 12.76 & 0.57 \\
+AWGN + canal vecino & 14.50 & 2.31 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Conclusiones}
+
+Con $A=0.50$ la constelación de GNU Radio (Fig.~\ref{fig:grc_const_awgn}f) alcanza $E_b/N_0=10$~dB y una BER de $4.0\times10^{-3}$ al decidir sobre una muestra por símbolo; con filtro acoplado el mismo ruido equivale a $E_b/N_0=19$~dB y no produjo errores (Tabla~\ref{tab:noiseamp}), por lo que, con receptor completo, el rango de 0 a 0.5 no alcanza la zona útil de la curva BER. Además, el par RRC--filtro acoplado no introdujo interferencia entre símbolos (Fig.~\ref{fig:ojo}).
+
+La curva simulada con codificación Gray coincidió con la teórica (Fig.~\ref{fig:ber_awgn}); la tabla del laboratorio requirió 0.57~dB adicionales de $E_b/N_0$, por lo que conviene usar codificación Gray.
+
+El canal vecino separado 36~kHz añadió una penalización de 2.3~dB (Tabla~\ref{tab:penalizacion}); como su espectro se solapa con la banda de la señal, se espera que la separación deba superar $R_s(1+\beta)=43.2$~kHz, valor a partir del cual los espectros dejan de solaparse; este umbral no se verificó con un barrido de $\Delta f$. En la Fase~3 se espera verificar con los radios definidos por software la penalización del orden de 2.3~dB y la mejora de la codificación Gray.
+
+% NO MODIFIQUE NI ELIMINE ESTA PARTE PARA QUE APAREZCAN LAS REFERENCIAS
+
+\nocite{*}
+
+\bibliographystyle{IEEEtran}
+\bibliography{bibliografia}
+
+\end{document}
