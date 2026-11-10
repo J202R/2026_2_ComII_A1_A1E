@@ -2,192 +2,184 @@
 
 <img src="https://img.shields.io/badge/UIS-Universidad%20Industrial%20de%20Santander-1B5E20?style=for-the-badge" alt="UIS"/>
 
-# 📡 CommII_A1_A1E
+# 📡 Proyecto Integrador — Fase 3. Implementación Experimental
 
-
-### Comunicaciones II — 27145
+### Comunicaciones II (27145) — Grupo A1-E
 **Escuela de Ingenierías Eléctrica, Electrónica y de Telecomunicaciones**
-*Facultad de Ingenierías Físico Mecánicas*
 
-<img src="https://img.shields.io/badge/Rama-main-2ea44f?style=flat-square" />
-<img src="https://img.shields.io/badge/GNU%20Radio-SDR-blue?style=flat-square" />
-<img src="https://img.shields.io/badge/Linux-Ubuntu-orange?style=flat-square&logo=linux&logoColor=white" />
-<img src="https://img.shields.io/badge/Lenguaje-Python-yellow?style=flat-square&logo=python&logoColor=white" />
-<img src="https://img.shields.io/badge/status-en%20desarrollo-brightgreen?style=flat-square" />
-
-*"Construimos Futuro"*
+<img src="https://img.shields.io/badge/Rama-Fase__3-2ea44f?style=flat-square" />
+<img src="https://img.shields.io/badge/Modulación-16--QAM-blue?style=flat-square" />
+<img src="https://img.shields.io/badge/Aplicación-DCI-yellow?style=flat-square" />
+<img src="https://img.shields.io/badge/Hardware-HackRF%20One-orange?style=flat-square" />
+<img src="https://img.shields.io/badge/status-Implementación%20SDR-success?style=flat-square" />
 
 </div>
 
-## 👥 Integrantes
-
-| Nombre completo | Rol |
-|---|---|
-| Jarol Nicolás Molano López | Estudiante |
-| William Camilo Motta Chacón | Estudiante |
-| Juan Andrés Rojas Rueda | Estudiante |
-
-
-> 💡 **Nota:** este README corresponde únicamente a la rama **`main`**. Cada rama de práctica (`Practica_1`, `Practica_2`, etc.) cuenta con su propio README donde se detalla el desarrollo específico de esa entrega.
+> 📌 Esta rama corresponde a la **Entrega 3: Informe + Git**. El canal simulado de la Fase 2 se reemplaza por un enlace físico entre **dos HackRF One**, conservando los parámetros de diseño y caracterizando el comportamiento real del enlace.
 
 ---
 
 ## 📑 Tabla de contenido
 
-- [Descripción del repositorio](#-descripción-del-repositorio)
-- [Integrantes](#-integrantes)
-- [Estructura de ramas](#-estructura-de-ramas)
-- [Estructura de directorios](#-estructura-de-directorios)
-- [Tecnologías y herramientas](#-tecnologías-y-herramientas)
-- [Cómo clonar el repositorio](#-cómo-clonar-el-repositorio)
-- [Flujo de trabajo (workflow) en Git](#-flujo-de-trabajo-workflow-en-git)
-- [Buenas prácticas](#-buenas-prácticas)
-- [Créditos](#-créditos)
+- [Integrantes y roles](#-integrantes-y-roles)
+- [Contexto: de la simulación al hardware](#-contexto-de-la-simulación-al-hardware)
+- [Objetivos de la Fase 3](#-objetivos-de-la-fase-3)
+- [Arquitectura del enlace](#-arquitectura-del-enlace)
+- [Parámetros del sistema y del radio](#-parámetros-del-sistema-y-del-radio)
+- [Pruebas realizadas](#-pruebas-realizadas)
+- [Resultados principales](#-resultados-principales)
+- [Flujo de trabajo en Git](#-flujo-de-trabajo-en-git)
+- [Entregables y lista de verificación](#-entregables-y-lista-de-verificación)
+- [Cómo ejecutar](#-cómo-ejecutar)
+- [Estructura del repositorio](#-estructura-del-repositorio)
 
 ---
 
-## 📖 Descripción del repositorio
+## 👥 Integrantes y roles
 
-Este repositorio contiene el desarrollo práctico del curso **Comunicaciones II (27145)** de la **Universidad Industrial de Santander**, correspondiente al grupo **A1_A1E**. Aquí se documentan y almacenan los laboratorios, algoritmos y aplicaciones desarrolladas a lo largo del semestre, incluyendo:
+| Integrante | Código | Rol | Responsabilidades en la Fase 3 |
+|---|---|---|---|
+| **Jarol Nicolas Molano Lopez** | `2230391` | **Líder de Proyecto y Gestor de Git** | Gestiona ramas y *pull requests*, integra avances y coordina el informe IEEE. |
+| **Juan Andres Rojas Rueda** | `2231065` | **Encargado de Modelado y Simulación** | Adapta Tx/Rx de GNU Radio (sincronización, decodificador de texto) y analiza resultados. |
+| **William Camilo Motta Chacón** | `2234639` | **Encargado de SDR y Canal** | Configura los HackRF One, el montaje, las mediciones y la verificación con analizador de espectro. |
 
-- 🔧 Configuración inicial de Git/GitHub y gestión de la información (Laboratorio 1).
-- 📻 Programación de bloques personalizados en **GNU Radio** para radio definida por software — *SDR* (Laboratorio 2 en adelante).
-- 📊 Implementación de bloques de estadística, acumulador y diferenciador aplicados a señales reales.
+---
 
-Cada práctica realizada en el laboratorio se organiza en una rama independiente, y dentro de esa rama cada integrante desarrolla su propio trabajo en una subrama personal, tal como se describe más adelante.
+## 📖 Contexto: de la simulación al hardware
 
+En la **Fase 2** el sistema 16-QAM se validó por completo en simulación (GNU Radio y Python). En la **Fase 3** la señal I/Q sale por un HackRF One, se propaga por aire (≈2 m) y la adquiere un segundo HackRF One. El objetivo no es medir BER, sino configurar bien el radio y observar los problemas reales que no existían en simulación: nivel de señal, saturación, componente DC, fuga del oscilador local, desplazamiento de frecuencia y pérdida de sincronía.
 
+---
 
-## 🌳 Estructura de ramas
+## 🎯 Objetivos de la Fase 3
 
-El repositorio sigue un modelo de ramas organizado por **práctica** y por **integrante**, de forma que el trabajo de cada persona sea trazable de manera independiente antes de integrarse a la rama principal de cada práctica.
+**Objetivo general:** integrar dos HackRF One con el Tx y el Rx 16-QAM de las fases previas, sin alterar los parámetros de diseño, y caracterizar el enlace físico resultante.
 
+**Objetivos específicos**
+
+1. Relacionar frecuencia central, tasa de muestreo, ganancias y ancho de banda del radio con las variables de banda base.
+2. Verificar el espectro del transmisor con un analizador de espectro.
+3. Evaluar el efecto de la amplitud digital (Tx) y de las ganancias LNA/VGA (Rx) sobre potencia, constelación y mensaje decodificado.
+4. Identificar casos de ruido dominante y saturación, y el efecto de un canal adyacente y del pico DC.
+5. Distinguir parámetros de diseño de comunicaciones frente a parámetros de interfaz de hardware.
+
+---
+
+## 🧩 Arquitectura del enlace
+
+```text
+TX (PC + HackRF #1)                                   RX (PC + HackRF #2)
+Bits / texto⊕PN → Mapeo 16-QAM → RRC → Canal emulado → ×32 → +200 kHz → Osmocom Sink
+                                                     ))) aire (~2 m) (((
+Osmocom Source → +lo_offset → ÷32 → AGC → FLL → RRC → Gardner → Costas(4) → AGC → Decisión / decodificador de texto
 ```
+
+- **Canal emulado de la Fase 2** conservado en el Tx (atenuación, AWGN con Es/N0 ≈ 27 dB y canal vecino a 36 kHz).
+- **Sincronización añadida:** AGC, FLL de borde de banda, Gardner, Costas de orden 4.
+- **Decodificador de texto propio:** busca delimitadores en las 4 rotaciones de 90° y 2 alineaciones, y reporta el % de caracteres correctos.
+
+---
+
+## ⚙️ Parámetros del sistema y del radio
+
+| Parámetro | Valor |
+|---|---|
+| `Rs` / `Sps` / `Rb` | 32 kBd / 8 / 128 kb/s |
+| Filtro RRC | β = 0.35, 81 coeficientes, B = 43.2 kHz |
+| Tasa banda base → radio | 256 kS/s → 8.192 MS/s (L = M = 32) |
+| Frecuencia | 880 MHz (verificación del Tx), 890 MHz (enlace) |
+| Frecuencia Tx / Rx | `fc − 200 kHz` / `fc + lo_offset` |
+| Ganancia Tx IF | 47 dB |
+| LNA / VGA (Rx) | 0–40 dB (pasos de 8) / 0–62 dB (pasos de 2) |
+| Amp. RF, Bias-T | Desactivados |
+
+---
+
+## 🧪 Pruebas realizadas
+
+1. Espectro del Tx a 880 MHz con analizador.
+2. Amplitud digital `A_tx` = 0.03, 0.1, 0.15.
+3. Barrido de VGA (4, 10, 20, 26 dB) y de LNA (8–32 dB).
+4. Casos extremos: LNA = VGA = 0 dB y LNA = VGA = 40 dB.
+5. Canal adyacente con `A_int` = 0.2, 0.3, 0.5.
+6. Posición del pico DC: `lo_offset` = 0.1, 0.6, 2 MHz.
+7. Separación máxima de antenas y configuración final (LNA = 32 dB).
+
+---
+
+## 📊 Resultados principales
+
+| LNA [dB] | VGA [dB] | Nivel [dBFS] | Constelación |
+|:-:|:-:|:-:|---|
+| 0 | 0 | −66.6 | Nube sin estructura |
+| 24 | 26 | −27.9 | Anillos, menor dispersión |
+| 32 | 4 | −26.1 | **16 grupos (óptimo)** |
+| 40 | 40 | −0.4 | Saturación del ADC |
+
+- Con LNA = 32 dB / VGA = 4 dB el mensaje se recuperó con **91–100 %** de caracteres correctos.
+- Canal adyacente a 36 kHz: sin efecto con SIR de 12.0 y 8.4 dB; con 4.0 dB destruyó la constelación.
+- La amplitud digital no mejora la SNR (escala señal y ruido por igual).
+- El pico DC no limita la calidad mientras quede fuera de ±21.6 kHz.
+- Conclusión: la **SNR fijada por la primera etapa del receptor** dominó la calidad del enlace.
+
+---
+
+## 🌿 Flujo de trabajo en Git
+
+```text
 main
- ├── Practica_1                 → Rama de "preproducción" del Laboratorio 2 (Práctica 1)
- │     ├── P1_Jarol             → Desarrollo individual de Jarol para la Práctica 1
- │     ├── P1_Juan              → Desarrollo individual de Juan para la Práctica 1
- │     └── P1_william           → Desarrollo individual de William para la Práctica 1
- │
- └── Practica_2                 → Rama de "preproducción" del Laboratorio 3 (Práctica 2)
-       ├── P2_Jarol             → Desarrollo individual de Jarol para la Práctica 2
-       ├── P2_Juan              → Desarrollo individual de Juan para la Práctica 2
-       └── P2_Willi             → Desarrollo individual de William para la Práctica 2
+ └── fase-3                         → rama de integración de la fase
+      ├── fase-3/implementacion-sdr → William Camilo (radios, montaje, mediciones)
+      ├── fase-3/receptor-sync      → Juan Andres (cadena Rx, decodificador)
+      └── fase-3/informe-ieee       → Jarol Nicolas (informe e integración)
 ```
-
-### 🔎 ¿Qué contiene cada tipo de rama?
-
-| Rama | Descripción |
-|---|---|
-| **`main`** | Rama principal y estable del repositorio. Contiene este README y sirve como base histórica del proyecto. |
-| **`Practica_1` / `Practica_2`** | Ramas de integración por práctica. Son la **vista de preproducción** que revisa el docente: aquí cada integrante hace *merge* de su rama personal una vez su parte está lista. Contienen los directorios `GNURadio` e `Informe` con el desarrollo consolidado del grupo para esa práctica. |
-| **`P{N}_Nombre`** | Ramas personales de trabajo (ej. `P1_Jarol`, `P2_Willi`). Contienen los **archivos temporales y de desarrollo individual** de cada integrante: flowgraphs de GNU Radio (`.grc`), bloques de Python en construcción, pruebas y avances propios antes de integrarlos a la rama de la práctica correspondiente. |
-
-
-
----
-
-## 📁 Estructura de directorios
-
-```
-CommII_A1_A1E/
-├── README.md
-├── Practica_1/
-│   ├── GNURadio/        → Flowgraphs (.grc) y bloques de Python
-│   └── Informe/         → Informe en formato LaTeX
-└── Practica_2/
-    ├── GNURadio/
-    └── Informe/
-```
-
----
-
-## 🛠 Tecnologías y herramientas
-
-| Herramienta | Uso |
-|---|---|
-| ![Linux](https://img.shields.io/badge/-Linux%20Ubuntu-orange?logo=linux&logoColor=white) | Sistema operativo de trabajo |
-| ![Git](https://img.shields.io/badge/-Git-F05032?logo=git&logoColor=white) | Control de versiones |
-| ![GitHub](https://img.shields.io/badge/-GitHub-181717?logo=github&logoColor=white) | Alojamiento y gestión del repositorio |
-| ![GNU Radio](https://img.shields.io/badge/-GNU%20Radio-5A5A5A) | Radio definida por software (SDR) |
-| ![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white) | Bloques personalizados en GNU Radio |
-| ![LaTeX](https://img.shields.io/badge/-LaTeX-008080?logo=latex&logoColor=white) | Redacción de informes |
-
----
-
-## ⬇️ Cómo clonar el repositorio
-
-### 1. Requisitos previos
-- Tener `git` instalado en la terminal de Linux.
-- Contar con un **Personal Access Token (classic)** de GitHub (necesario para autenticarse al hacer `push`).
-
-### 2. Clonar usando HTTPS
 
 ```bash
-git clone https://github.com/<usuario>/CommII_A1_A1E.git
+git checkout main && git pull
+git checkout -b fase-3
+git push -u origin fase-3
+git checkout -b fase-3/informe-ieee
 ```
 
-### 3. Ingresar al directorio del proyecto
-
-```bash
-cd CommII_A1_A1E
-```
-
-### 4. Ver las ramas disponibles
-
-```bash
-git branch -a
-```
-
-### 5. Cambiar a la rama de la práctica que necesitas revisar
-
-```bash
-git checkout Practica_1
-# o, para ver el trabajo individual de un integrante:
-git checkout P1_Jarol
-```
-
-### 6. Mantener tu copia local actualizada
-
-```bash
-git pull
-```
-
-> 🔑 Al ejecutar `git push` por primera vez, Git pedirá usuario y contraseña: el **usuario** es tu usuario de GitHub y la **contraseña** es el *token* generado (no la contraseña de tu cuenta).
+Al cierre: PR de `fase-3` hacia `main` y etiqueta `v3.0-fase3`.
 
 ---
 
-## 🔄 Flujo de trabajo (workflow) en Git
+## ✅ Entregables y lista de verificación
 
-1. Cada práctica nueva parte de `main` y crea su rama `Practica_N`.
-2. Dentro de `Practica_N`, cada integrante crea su propia subrama `PN_Nombre`.
-3. Cada integrante trabaja y hace *commits* en **su propia subrama**:
-   ```bash
-   git add .
-   git commit -m "Descripción del cambio"
-   git push
-   ```
-4. Cuando su parte está lista, se hace **merge** de la subrama personal hacia la rama de la práctica correspondiente (`Practica_N`), que funciona como la versión de "preproducción" revisada por el docente.
-5. Al finalizar el semestre, la rama `main` se mantiene como la rama estable de referencia del repositorio.
+- [ ] Informe IEEE de la Fase 3.
+- [ ] Flujogramas `.grc` de Tx y Rx funcionales.
+- [ ] Bloque Python del decodificador de texto.
+- [ ] Capturas: analizador de espectro, espectros RF, constelaciones por prueba.
+- [ ] Foto del montaje físico.
+- [ ] Historial de Git con ramas y *pull requests* aprobados.
 
 ---
 
-## ✅ Buenas prácticas
+## ▶️ Cómo ejecutar
 
-- Realizar *commits* pequeños y con mensajes descriptivos.
-- No trabajar directamente sobre `main` ni sobre las ramas `Practica_N`; usar siempre la subrama personal.
-- Actualizar (`git pull`) antes de empezar a trabajar cada sesión.
-- Verificar con `git status` los cambios antes de cada `commit`.
-- Mantener los archivos de cada práctica dentro de su directorio correspondiente (`GNURadio` / `Informe`).
+**Requisitos:** GNU Radio Companion con `gr-osmosdr`, 2 × HackRF One, Python 3 (`numpy`).
+
+```bash
+git clone <URL_DEL_REPOSITORIO>
+cd 2026_2_ComII_A1_A1E
+git checkout fase-3
+hackrf_info                       # obtener los números de serie
+# Abrir los .grc: asignar hackrf=<serial> en Sink (Tx) y Source (Rx)
+gnuradio-companion Fase_3_Implementacion_Experimental/Entrega_3/flujogramas/
+```
+
+> Ajustar nombres de archivos a los que contenga el repositorio.
 
 ---
 
-## 🏫 Créditos
+## 📁 Estructura del repositorio
 
-Proyecto desarrollado como parte del curso **Comunicaciones II (27145)** — Escuela de Ingenierías Eléctrica, Electrónica y de Telecomunicaciones, **Universidad Industrial de Santander (UIS)**.
-
-<div align="center">
-
-*Construimos Futuro* 🇨🇴
-
-</div>
+```text
+Fase_3_Implementacion_Experimental/
+└── Entrega_3/
+    ├── flujogramas/     → Tx y Rx (.grc)
+    ├── codigo/          → Decodificador de texto (.py)
+    ├── figuras/         → Espectros, constelaciones, montaje
+    └── informe/         → Informe IEEE (main.tex + sections/)
+```
